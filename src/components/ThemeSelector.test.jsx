@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
-import ThemeSelector from "./ThemeSelector";
+import ThemeSelector from "./ThemeSelector.jsx";
+import { expect } from "vitest";
 
 describe('ThemeSelector', () => {
 
@@ -18,7 +19,7 @@ describe('ThemeSelector', () => {
         const lightButton = screen.getAllByLabelText('Light')[0]
         lightButton.click()
 
-        expect(document.documentElement.classList.contains('dark')).toBeFalsy()
+        expect(document.documentElement.classList.contains('dark')).toBeFalsy
     })
 
 })
