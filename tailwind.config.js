@@ -12,6 +12,15 @@ export default {
       },
       colors: {
         'lightblack': '#131517'
+      },
+      keyframes: {
+        fadein: {
+          '0%': { transform: "scale(0.9)", opacity: 0 },
+          '100%': { transform: "scale(1)", opacity: 1 }
+        }
+      },
+      animation: {
+        fadein: 'fadein 200ms ease-in-out 1'
       }
     },
   },
