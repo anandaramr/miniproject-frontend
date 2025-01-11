@@ -16,7 +16,7 @@ export default function Popup({ children, title }) {
     return (
 		<div className="w-fit">
 			<button onClick={show}>{ title }</button>
-			{showPopup && <div ref={popupRef} className="animate-fadein"> { children } </div>}
+			{showPopup && <div ref={popupRef} className="animate-fadein fixed z-50"> { children } </div>}
 		</div>
     )
 }

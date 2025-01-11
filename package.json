@@ -11,6 +11,11 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.1",
+    "@codemirror/lint": "^6.8.4",
+    "@lezer/highlight": "^1.2.1",
+    "@uiw/codemirror-themes": "^4.23.7",
+    "@uiw/react-codemirror": "^4.23.7",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
