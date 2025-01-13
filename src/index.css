@@ -9,3 +9,7 @@ html {
 body {
     @apply font-inter [font-feature-settings:'cv11']
 }
+
+button {
+    @apply select-none
+}
