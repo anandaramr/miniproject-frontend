@@ -11,7 +11,7 @@ function Home() {
 		<div className="h-svh p-2">
 			<NavBar/>
 			<div className="flex">
-				<Request setResponse={setResponse} />
+				<Request tabId={1} setResponse={setResponse} />
 				<Response response={response} />
 			</div>
 		</div>
