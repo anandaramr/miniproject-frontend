@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { parseJson } from "../utils/utils";
 import Editor from "./Editor";
 
-export default function Request({ setResponse }) {
+export default function Request({ tabId, setResponse }) {
 
     const [ method, setMethod] = useState("GET")
     const [ url, setUrl ] = useState("")
@@ -16,19 +16,16 @@ export default function Request({ setResponse }) {
     const [ controller, setController ] = useState()
 
     useEffect(() => {
-        const { data: state, err } = parseJson(localStorage.getItem("state"))
-        if(err || !state) return;
-        
-        const { method, url, body } = state
+        const { method, url, body } = getTabState()
 
-        setMethod(method)
-        setUrl(url)
-        setBody(body)
+        setMethod(method || "GET")
+        setUrl(url || "")
+        setBody(body || "")
     }, [])
 
     useEffect(() => {
         if(!url && !body) return;
-        saveTabState({ method, url, body })
+        saveTabState()
     }, [method, url, body, headers])
     
     async function sendRequest() {
@@ -51,12 +48,26 @@ export default function Request({ setResponse }) {
         setIsLoading(false)
     }
 
-    function saveTabState({ method, url, body }) {
+    function saveTabState() {
         const methods = [ "GET", "POST", "PUT", "PATCH", "DELETE" ]
         if(!methods.includes(method)) method = "GET";
+        
+        let { data } = parseJson(localStorage.getItem("state"))
+        
+        let tabs = data?.tabs || []
+        tabs = tabs?.filter(item => item.tabId != tabId)
 
-        const data = { method, url, body }
+        tabs = [ ...tabs, { tabId, method, url, body }]
+        data = { lastActiveTab: tabId, tabs }
+
         localStorage.setItem("state", JSON.stringify(data))
+    }
+
+    function getTabState() {
+        const { data } = parseJson(localStorage.getItem("state"))
+        if (!data) return {};
+        
+        return data.tabs?.find(item => item.tabId==tabId) || {}
     }
 
     function handleButtonClick() {
