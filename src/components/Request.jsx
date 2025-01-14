@@ -105,15 +105,15 @@ export default function Request({ tabId, displayResponse }) {
     const methodButton =<div className="py-2 rounded-md px-7 dark:hover:bg-zinc-900 duration-200 dark:border-zinc-600 border-zinc-300 border-[1px] flex flex-col justify-center w-28 dark:bg-lightblack">{method}</div>
 
     return (
-        <div className="w-fit px-5 border-r-[1px] border-zinc-700 border-opacity-20">
-            <div className="flex gap-2">
+        <div className="w-fit px-5 mt-3 border-r-[1px] border-zinc-700 border-opacity-20">
+            <div className="flex gap-2 mb-3">
                 <Popup collapsible title={methodButton} >
                     <Method setMethod={setMethod}/>
                 </Popup>
                 <input onChange={(evt) => setUrl(evt.target.value)} value={url} onKeyDown={handleKeyBinding} type="text" className="rounded-md text-sm py-2 w-[500px] dark:border-zinc-700 outline-none px-3 border-zinc-300 border-[1px] dark:bg-lightblack"/>
                 <button onClick={handleButtonClick} disabled={!url?.trim()} className="font-medium rounded-lg py-2 dark:border-zinc-700 w-28 text-white border-zinc-300 border-[1px] bg-rose-400 hover:bg-rose-500 duration-200 disabled:opacity-50">{isLoading ? "Cancel" : "Send"}</button>
             </div>
-            <Editor value={body} setValue={setBody} width="700px"/>
+            <Editor value={body} language={"json"} setValue={setBody} width="700px"/>
         </div>
     )
 }
