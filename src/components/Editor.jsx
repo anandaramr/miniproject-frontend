@@ -2,10 +2,10 @@ import CodeMirror, { EditorView } from "@uiw/react-codemirror"
 import { json, jsonParseLinter } from "@codemirror/lang-json"
 import { editorDarkTheme, editorLightTheme } from "../utils/codemirror-theme"
 import { linter } from "@codemirror/lint"
-import { useCallback, useContext, useState } from "react";
+import { useCallback, useContext } from "react";
 import { ThemeContext } from "../context/ThemeContext";
 
-export default function Editor({ value, setValue, readOnly, height, width }) {
+export default function Editor({ value, setValue, readOnly, height, width, language }) {
     
     const editorTheme = EditorView.theme({
         "&.cm-focused" : {
@@ -14,8 +14,9 @@ export default function Editor({ value, setValue, readOnly, height, width }) {
     })
 
     const lint = linter(jsonParseLinter())
-    const extensions = [json(), editorTheme, EditorView.lineWrapping]
-    if (!readOnly) extensions.push(lint)
+    const extensions = [editorTheme, EditorView.lineWrapping]
+    if (!readOnly) extensions.push(lint);
+    if (language=="json") extensions.push(json())
     
     const onChange = useCallback((val) => {
         if(setValue) setValue(val)
@@ -25,7 +26,7 @@ export default function Editor({ value, setValue, readOnly, height, width }) {
     
 
     return (
-        <div className="text-sm w-fit border-[1px] border-zinc-800 h-fit my-5 rounded-lg p-1">
+        <div className="text-sm w-fit border-[1px] border-zinc-300 dark:border-zinc-800 dark:bg-lightblack bg-white h-fit my-3 rounded-lg p-1">
             <CodeMirror
                 className="border-zinc-900 outline-none text-wrap"
                 value={value}
