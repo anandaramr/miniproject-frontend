@@ -7,11 +7,15 @@ html {
 }
 
 ::-webkit-scrollbar {
-    @apply w-2 h-0 bg-transparent
+    @apply w-2 h-[0.3rem] bg-transparent
 }
 
 ::-webkit-scrollbar-thumb {
-    @apply bg-zinc-800 bg-opacity-30 rounded
+    @apply bg-zinc-800 dark:bg-opacity-70 bg-opacity-30 rounded
+}
+
+::-webkit-scrollbar-corner{
+    @apply bg-transparent
 }
 
 body {

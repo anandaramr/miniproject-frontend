@@ -1,5 +1,5 @@
 import NavBar from "../components/NavBar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
 import { generateId, parseJson } from "../utils/utils";
@@ -10,6 +10,7 @@ function Home() {
 	const [ response, setResponse ] = useState({})
 	const [ tabs, setTabs ] = useState([])
 	const [ currentTab, setCurrentTab ] = useState()
+	const tabRef = useRef()
 	
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
@@ -96,13 +97,17 @@ function Home() {
 	}
 
 	return (
-		<div className="h-svh p-2">
+		<div className="p-2">
 			<NavBar/>
 
 			<div className="px-8">
-				<div className="flex my-3 px-5">
-					{tabs?.map(tabId => <Tab active={tabId==currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
-					<Tab key={"+"} title={"+"} onClick={newTab} />
+				<div className="flex my-3">
+					<div ref={tabRef} onWheel={evt => tabRef.current.scrollLeft +=  evt.deltaY} className="flex overflow-scroll relative">
+						{tabs?.map(tabId => <Tab active={tabId==currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
+					</div>
+					<div>
+						<Tab key={"+"} title={"+"} onClick={newTab} />
+					</div>
 				</div>
 
 				<div className="flex">
