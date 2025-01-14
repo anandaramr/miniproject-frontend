@@ -1,3 +1,5 @@
+import { v4 as uuid } from 'uuid'
+
 export function parseJson(body) {
     try {
         const data = JSON.parse(body)
@@ -5,4 +7,8 @@ export function parseJson(body) {
     } catch(error) {
         return { error };
     }
+}
+
+export function generateId() {
+    return uuid()
 }
