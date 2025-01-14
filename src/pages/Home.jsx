@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar";
 import { useEffect, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { parseJson } from "../utils/utils";
+import { generateId, parseJson } from "../utils/utils";
 import Tab from "../components/Tab";
 
 function Home() {
@@ -24,11 +24,6 @@ function Home() {
 	}, [])
 
 	useEffect(() => {
-		if(!response.data) return;
-		saveResponse()
-	}, [response])
-
-	useEffect(() => {
         const { data } = parseJson(localStorage.getItem("state"))
         if(!data) return;
 
@@ -37,7 +32,8 @@ function Home() {
     }, [currentTab])
 
 	function newTab() {
-		const newTabId = tabs[tabs.length-1] + 1 || 1 
+		const newTabId = generateId()
+
 		setCurrentTab(newTabId)
 		setTabs(t => [ ...t, newTabId ])
 
@@ -77,13 +73,13 @@ function Home() {
 		localStorage.setItem("state", JSON.stringify(data))
 	}
 
-	function saveResponse() {
+	function saveResponse(tabId, res) {
 		const { data } = parseJson(localStorage.getItem("state"))
 		if(!data) return;
 
 		const tabs = data.tabs?.map(item => {
-			if (item.tabId==currentTab) {
-				item.response = response
+			if (item.tabId==tabId) {
+				item.response = res
 			}
 			return item
 		})
@@ -92,18 +88,25 @@ function Home() {
 		localStorage.setItem("state", JSON.stringify(newData))
 	}
 
+	function displayResponse(tabId, res) {
+		saveResponse(tabId, res)
+		if(tabId==currentTab) {
+			setResponse(res)
+		}
+	}
+
 	return (
 		<div className="h-svh p-2">
 			<NavBar/>
 
 			<div className="px-8">
 				<div className="flex my-3 px-5">
-					{tabs?.map(tabId => <Tab title={tabId} currentTab={currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
+					{tabs?.map(tabId => <Tab active={tabId==currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
 					<Tab key={"+"} title={"+"} onClick={newTab} />
 				</div>
 
 				<div className="flex">
-					<Request tabId={currentTab} setResponse={setResponse} />
+					<Request tabId={currentTab} displayResponse={displayResponse} />
 					<Response tabId={currentTab} response={response} />
 				</div>
 			</div>

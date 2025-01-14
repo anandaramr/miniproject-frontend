@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { parseJson } from "../utils/utils";
 import Editor from "./Editor";
 
-export default function Request({ tabId, setResponse }) {
+export default function Request({ tabId, displayResponse }) {
 
     const [ method, setMethod] = useState("GET")
     const [ url, setUrl ] = useState("")
@@ -41,9 +41,11 @@ export default function Request({ tabId, setResponse }) {
 
         const controller = new AbortController()
         setController(controller)
+
+        const savedTabId = tabId
         const response = await request(input, method, body, reqHeaders, controller);
 
-        setResponse(response)
+        displayResponse(savedTabId, response)
         setIsLoading(false)
     }
 
@@ -109,7 +111,7 @@ export default function Request({ tabId, setResponse }) {
                     <Method setMethod={setMethod}/>
                 </Popup>
                 <input onChange={(evt) => setUrl(evt.target.value)} value={url} onKeyDown={handleKeyBinding} type="text" className="rounded-md text-sm py-2 w-[500px] dark:border-zinc-700 outline-none px-3 border-zinc-300 border-[1px] dark:bg-lightblack"/>
-                <button onClick={handleButtonClick} disabled={!url?.trim()} className="font-medium rounded-lg py-2 dark:border-zinc-700 w-28 border-zinc-300 border-[1px] dark:bg-rose-400 dark:hover:bg-rose-500 duration-200 disabled:opacity-50">{isLoading ? "Cancel" : "Send"}</button>
+                <button onClick={handleButtonClick} disabled={!url?.trim()} className="font-medium rounded-lg py-2 dark:border-zinc-700 w-28 text-white border-zinc-300 border-[1px] bg-rose-400 hover:bg-rose-500 duration-200 disabled:opacity-50">{isLoading ? "Cancel" : "Send"}</button>
             </div>
             <Editor value={body} setValue={setBody} width="700px"/>
         </div>
