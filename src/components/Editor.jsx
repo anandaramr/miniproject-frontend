@@ -26,9 +26,9 @@ export default function Editor({ value, setValue, readOnly, height, width, langu
     
 
     return (
-        <div className="text-sm w-fit border-[1px] border-zinc-300 dark:border-zinc-800 dark:bg-lightblack bg-white h-fit my-5 rounded-lg p-1">
+        <div className="text-sm w-fit border-[1px] border-zinc-300 dark:border-zinc-800 dark:bg-lightblack bg-white h-fit my-3 rounded-lg p-1">
             <CodeMirror
-                className="border-zinc-900 outline-none text-wrap select-none"
+                className="border-zinc-900 outline-none text-wrap"
                 value={value}
                 theme={theme == "dark" ? editorDarkTheme : editorLightTheme}
                 height={height || "500px"}

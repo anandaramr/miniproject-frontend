@@ -109,7 +109,7 @@ function Home() {
 						<Tab key={"+"} title={"+"} onClick={newTab} />
 					</div>
 				</div>
-
+				
 				<div className="flex">
 					<Request tabId={currentTab} displayResponse={displayResponse} />
 					<Response tabId={currentTab} response={response} />
