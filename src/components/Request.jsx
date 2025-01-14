@@ -21,7 +21,7 @@ export default function Request({ tabId, setResponse }) {
         setMethod(method || "GET")
         setUrl(url || "")
         setBody(body || "")
-    }, [])
+    }, [tabId])
 
     useEffect(() => {
         if(!url && !body) return;
@@ -53,13 +53,20 @@ export default function Request({ tabId, setResponse }) {
         if(!methods.includes(method)) method = "GET";
         
         let { data } = parseJson(localStorage.getItem("state"))
-        
         let tabs = data?.tabs || []
-        tabs = tabs?.filter(item => item.tabId != tabId)
+        
+        let found = false
+        tabs = tabs.map(item => {
+            if (item.tabId === tabId) {
+                found = true
+                item = { ...item, method, url, body }
+            }
+            return item
+        })
+        
+        if(!found) tabs.push({ tabId, method, url, body });
 
-        tabs = [ ...tabs, { tabId, method, url, body }]
         data = { lastActiveTab: tabId, tabs }
-
         localStorage.setItem("state", JSON.stringify(data))
     }
 
@@ -67,7 +74,7 @@ export default function Request({ tabId, setResponse }) {
         const { data } = parseJson(localStorage.getItem("state"))
         if (!data) return {};
         
-        return data.tabs?.find(item => item.tabId==tabId) || {}
+        return data.tabs?.find(item => item?.tabId==tabId) || {}
     }
 
     function handleButtonClick() {
@@ -96,7 +103,7 @@ export default function Request({ tabId, setResponse }) {
     const methodButton =<div className="py-2 rounded-md px-7 dark:hover:bg-zinc-900 duration-200 dark:border-zinc-600 border-zinc-300 border-[1px] flex flex-col justify-center w-28 dark:bg-lightblack">{method}</div>
 
     return (
-        <div className="w-fit border-r-[1px] border-zinc-700 border-opacity-20 px-10">
+        <div className="w-fit px-5 border-r-[1px] border-zinc-700 border-opacity-20">
             <div className="flex gap-2">
                 <Popup collapsible title={methodButton} >
                     <Method setMethod={setMethod}/>
