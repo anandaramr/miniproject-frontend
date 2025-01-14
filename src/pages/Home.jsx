@@ -84,7 +84,7 @@ function Home() {
 					{tabs?.map(item => <Tab title={item?.tabId} active={item?.tabId==currentTab} key={item?.tabId} onDoubleClick={closeTab} onClick={() => setCurrentTab(item?.tabId)} />)}
 					<Tab key={"+"} title={"+"} onClick={newTab} />
 				</div>
-
+				
 				<div className="flex">
 					<Request tabId={currentTab} setResponse={setResponse} />
 					<Response tabId={currentTab} response={response} />
