@@ -9,7 +9,7 @@ export default function Request({ tabId, setResponse }) {
 
     const [ method, setMethod] = useState("GET")
     const [ url, setUrl ] = useState("")
-    const [ body, setBody ] = useState("")
+    const [ body, setBody ] = useState()
     const [ headers, setHeaders ] = useState({})
     const [ isLoading, setIsLoading ] = useState(false)
     
@@ -17,14 +17,13 @@ export default function Request({ tabId, setResponse }) {
 
     useEffect(() => {
         const { method, url, body } = getTabState()
-
+        
         setMethod(method || "GET")
         setUrl(url || "")
         setBody(body || "")
     }, [tabId])
-
+    
     useEffect(() => {
-        if(!url && !body) return;
         saveTabState()
     }, [method, url, body, headers])
     
@@ -49,6 +48,7 @@ export default function Request({ tabId, setResponse }) {
     }
 
     function saveTabState() {
+        if(!tabId) return;
         const methods = [ "GET", "POST", "PUT", "PATCH", "DELETE" ]
         if(!methods.includes(method)) method = "GET";
         
@@ -66,7 +66,7 @@ export default function Request({ tabId, setResponse }) {
         
         if(!found) tabs.push({ tabId, method, url, body });
 
-        data = { lastActiveTab: tabId, tabs }
+        data = { ...data, tabs }
         localStorage.setItem("state", JSON.stringify(data))
     }
 

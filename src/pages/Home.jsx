@@ -10,17 +10,17 @@ function Home() {
 	const [ response, setResponse ] = useState({})
 	const [ tabs, setTabs ] = useState([])
 	const [ currentTab, setCurrentTab ] = useState()
-
+	
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
 		if(!data || !data.tabs?.length) {
-			setTabs([{ tabId: 1 }])
+			setTabs([ 1 ])
 			setCurrentTab(1)
 			return;
 		};
 
 		setCurrentTab(data.lastActiveTab)
-		setTabs(data.tabs || [{ tabId: 1 }])
+		setTabs(data.tabs.map(item => item.tabId) || [ 1 ])
 	}, [])
 
 	useEffect(() => {
@@ -37,27 +37,44 @@ function Home() {
     }, [currentTab])
 
 	function newTab() {
-		const newTab = { tabId: tabs[tabs.length-1]?.tabId + 1 || 1 }
-		setTabs(t => [ ...t, newTab ])
-		setCurrentTab(newTab.tabId)
+		const newTabId = tabs[tabs.length-1] + 1 || 1 
+		setCurrentTab(newTabId)
+		setTabs(t => [ ...t, newTabId ])
+
+		let { data } = parseJson(localStorage.getItem("state"))
+		if(!data) data = {};
+
+		data.lastActiveTab = newTabId
+		data.tabs = [ ...data.tabs, { tabId: newTabId } ]
+		localStorage.setItem("state", JSON.stringify(data))
 	}
 
-	function closeTab(evt) {
-		if (tabs?.length==1) {
+	function closeTab(tabId) {
+		const { data } = parseJson(localStorage.getItem("state"))
+		if(!data) return;
+
+		const tabList = data.tabs
+		if (tabList?.length==1) {
 			return;
 		}
 
-		const filter = (tabs) => tabs.filter(tab => tab.tabId!=evt.target.id)
-		setTabs(filter)
-
-		const newTabs = filter(tabs)
-		console.log(tabs)
-		console.log(newTabs)
-		const nextCurrentTab = newTabs[currentTab-1]?.tabId || newTabs[0].tabId
+		const newTabs = tabList.filter(tab => tab.tabId!=tabId)
+		const nextCurrentTab = tabId!=currentTab ? currentTab : newTabs[tabs.indexOf(tabId)-1]?.tabId || newTabs[0].tabId
+		
+		setCurrentTab(nextCurrentTab)
+		setTabs(newTabs.map(item => item.tabId))
 
 		const newState = { lastActiveTab: nextCurrentTab, tabs: newTabs }
 		localStorage.setItem("state", JSON.stringify(newState))
-		setCurrentTab(nextCurrentTab)
+	}
+
+	function selectTab(tabId) {
+		let { data } = parseJson(localStorage.getItem("state"))
+		if(!data) data = [];
+
+		setCurrentTab(tabId)
+		data.lastActiveTab = tabId
+		localStorage.setItem("state", JSON.stringify(data))
 	}
 
 	function saveResponse() {
@@ -81,7 +98,7 @@ function Home() {
 
 			<div className="px-8">
 				<div className="flex my-3 px-5">
-					{tabs?.map(item => <Tab title={item?.tabId} active={item?.tabId==currentTab} key={item?.tabId} onDoubleClick={closeTab} onClick={() => setCurrentTab(item?.tabId)} />)}
+					{tabs?.map(tabId => <Tab title={tabId} currentTab={currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
 					<Tab key={"+"} title={"+"} onClick={newTab} />
 				</div>
 
