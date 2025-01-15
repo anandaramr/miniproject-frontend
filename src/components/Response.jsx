@@ -42,12 +42,12 @@ export default function Response({ response }) {
             <div>
                 <div className="flex justify-between">
                     <div className={cls("flex gap-3 text-xs font-semibold select-none", response?.ok && "text-emerald-400")}>
-                        <span>{"Status"}</span>
+                        <span>{response.statusCode && "Status"}</span>
                         <span>{response.statusCode}</span>
                         <span>{response.statusText}</span>
                     </div>
 
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 select-none">
                         <div className="flex-col justify-center">
                             <span onClick={copy} className="text-gray-500 text-xl hover:text-gray-300 duration-200 cursor-pointer material-symbols-outlined">content_copy</span>
                             <div ref={copyMessage} className="text-xs opacity-0 hidden font-medium absolute -translate-x-5 my-1 z-10 bg-white bg-opacity-80 cursor-default rounded-md shadow-lg border-[1px] border-zinc-200 text-black px-3 py-1">Copied!</div>

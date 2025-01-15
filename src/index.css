@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 html {
-    @apply dark:bg-lightblack duration-200 text-lightblack dark:text-white selection:bg-rose-400
+    @apply dark:bg-lightblack duration-200 text-lightblack dark:text-white selection:bg-zinc-400 dark:selection:bg-zinc-700
 }
 
 ::-webkit-scrollbar {
