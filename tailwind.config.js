@@ -21,6 +21,9 @@ export default {
       },
       animation: {
         fadein: 'fadein 200ms ease-in-out 1'
+      },
+      spacing: {
+        '1.5': '0.4rem'
       }
     },
   },
