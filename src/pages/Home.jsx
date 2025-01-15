@@ -2,26 +2,26 @@ import NavBar from "../components/NavBar";
 import { useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, parseJson } from "../utils/utils";
+import { generateId, parseJson, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 
 function Home() {
 
 	const [ response, setResponse ] = useState({})
-	const [ tabs, setTabs ] = useState([])
+	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
 	const tabRef = useRef()
 	
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
 		if(!data || !data.tabs?.length) {
-			setTabs([ 1 ])
+			setTabs([{ tabId: 1 }])
 			setCurrentTab(1)
 			return;
 		};
 
 		setCurrentTab(data.lastActiveTab)
-		setTabs(data.tabs.map(item => item.tabId) || [ 1 ])
+		setTabs(data.tabs || [{ tabId: 1 }])
 	}, [])
 
 	useEffect(() => {
@@ -33,60 +33,63 @@ function Home() {
     }, [currentTab])
 
 	function newTab() {
-		const newTabId = generateId()
+		updateState(({ tabs }) => {
+			const newTabId = generateId()
 
-		setCurrentTab(newTabId)
-		setTabs(t => [ ...t, newTabId ])
-
-		let { data } = parseJson(localStorage.getItem("state"))
-		if(!data) data = {};
-
-		data.lastActiveTab = newTabId
-		data.tabs = [ ...data.tabs, { tabId: newTabId } ]
-		localStorage.setItem("state", JSON.stringify(data))
+			setCurrentTab(newTabId)
+			setTabs(t => [ ...t, { tabId: newTabId }])
+			const lastActiveTab = newTabId
+			
+			tabs = tabs || []
+			tabs = [ ...tabs, { tabId: newTabId }]
+			return { lastActiveTab, tabs }
+		})
 	}
 
 	function closeTab(tabId) {
-		const { data } = parseJson(localStorage.getItem("state"))
-		if(!data) return;
+		updateState(({ tabs: tabList }) => {
+			if (tabList?.length==1) return;
 
-		const tabList = data.tabs
-		if (tabList?.length==1) {
-			return;
-		}
+			const newTabs = tabList.filter(tab => tab.tabId!=tabId)
+			let nextCurrentTab = currentTab
 
-		const newTabs = tabList.filter(tab => tab.tabId!=tabId)
-		const nextCurrentTab = tabId!=currentTab ? currentTab : newTabs[tabs.indexOf(tabId)-1]?.tabId || newTabs[0].tabId
-		
-		setCurrentTab(nextCurrentTab)
-		setTabs(newTabs.map(item => item.tabId))
+			if (tabId==currentTab) {
+				const iterator = tabs.entries()
+				let result
+				while ((result = iterator.next().value)) {
+					const [ idx ] = result
+					if (tabs[idx].tabId==currentTab) {
+						nextCurrentTab = idx < tabs.length-1 ? tabs[idx+1].tabId : tabs[idx-1].tabId
+						break
+					}
+				}
+			}
 
-		const newState = { lastActiveTab: nextCurrentTab, tabs: newTabs }
-		localStorage.setItem("state", JSON.stringify(newState))
+			setCurrentTab(nextCurrentTab)
+			setTabs(newTabs)
+
+			return { lastActiveTab: nextCurrentTab, tabs: newTabs }
+		})
 	}
 
 	function selectTab(tabId) {
-		let { data } = parseJson(localStorage.getItem("state"))
-		if(!data) data = [];
-
 		setCurrentTab(tabId)
-		data.lastActiveTab = tabId
-		localStorage.setItem("state", JSON.stringify(data))
+		updateState(() => {
+			return { lastActiveTab: tabId }
+		})
 	}
 
 	function saveResponse(tabId, res) {
-		const { data } = parseJson(localStorage.getItem("state"))
-		if(!data) return;
+		updateState(({ tabs }) => {
+			tabs = tabs?.map(item => {
+				if(item.tabId==tabId) {
+					item.response = res
+				}
+				return item
+			})
 
-		const tabs = data.tabs?.map(item => {
-			if (item.tabId==tabId) {
-				item.response = res
-			}
-			return item
+			return { tabs }
 		})
-
-		const newData = { ...data, tabs }
-		localStorage.setItem("state", JSON.stringify(newData))
 	}
 
 	function displayResponse(tabId, res) {
@@ -103,10 +106,10 @@ function Home() {
 			<div className="px-8">
 				<div className="flex my-3">
 					<div ref={tabRef} onWheel={evt => tabRef.current.scrollLeft +=  evt.deltaY} className="flex overflow-scroll relative">
-						{tabs?.map(tabId => <Tab active={tabId==currentTab} key={tabId} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
+						{tabs?.map(({ tabId, title }) => <Tab key={tabId} id={tabId} title={title} active={tabId==currentTab} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
 					</div>
 					<div>
-						<Tab key={"+"} title={"+"} onClick={newTab} />
+						<span onClick={newTab} className="border-[1px] dark:border-zinc-800 rounded-sm px-3 py-1 cursor-pointer select-none text-zinc-500 flex items-center"><span>+</span></span>
 					</div>
 				</div>
 				
