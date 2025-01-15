@@ -1,15 +1,14 @@
 
 export async function request(url, method, body, reqHeaders, controller) {
     if(!method) method = 'GET';
-    const headers = new Headers(reqHeaders)
+    let headers = new Headers(reqHeaders)
     if(method=='GET') body = null;
 
     const request = new Request(url, { method, body, headers, signal: controller.signal })
-    const response = await fetch(request)
+    const response = await fetch(request).catch(error => { return { ok: false, error } })
 
-    const statusCode = response.status
-    const statusText = response.statusText
-    const ok = response.ok
+    const { status: statusCode, statusText, ok } = response;
+    ({ headers } = response)
 
     let data
     
@@ -20,7 +19,7 @@ export async function request(url, method, body, reqHeaders, controller) {
         data = await response.text()
     }
 
-    return { data, statusCode, statusText, ok }
+    return { data, statusCode, statusText, ok, headers }
 }
 
 function isJsonType(headers) {

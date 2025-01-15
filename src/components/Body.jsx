@@ -4,7 +4,7 @@ export default function Body({ value, setValue, language }) {
 
     return(
         <div>
-            <Editor value={value} language={"json"} setValue={setValue} height={"472px"} width="700px"/>
+            <Editor value={value} language={"json"} setValue={setValue} height={"60svh"} width="700px"/>
         </div>
     )
 }

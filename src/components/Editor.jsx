@@ -31,7 +31,7 @@ export default function Editor({ value, setValue, readOnly, height, width, langu
                 className="border-zinc-900 outline-none text-wrap"
                 value={value}
                 theme={theme == "dark" ? editorDarkTheme : editorLightTheme}
-                height={height || "500px"}
+                height={height || "60svh"}
                 width={width || "500px"}
                 extensions={extensions}
                 onChange={onChange}
