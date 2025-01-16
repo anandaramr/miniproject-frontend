@@ -1,0 +1,15 @@
+{
+    "short_name": "ButterScotch",
+    "name": "ButterScotch API Client",
+    "icons": [
+      {
+        "src": "/public/favicon-194x194.png",
+        "sizes": "194x194",
+        "type": "image/png"
+      }],
+    "start_url": ".",
+    "display": "standalone",
+    "theme_color": "#000000",
+    "background_color": "#ffffff"
+}
+  
