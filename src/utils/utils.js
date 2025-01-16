@@ -23,8 +23,16 @@ import { v4 as uuid } from 'uuid'
  * })
  */
 export function updateState(func) {
-    const { data } = parseJson(localStorage.getItem("state"))
-    let { tabs, lastActiveTab } = func(data || {})
+    let { data, error } = parseJson(localStorage.getItem("state"))
+    if (error) {
+        console.error("Error parsing state: ", error)
+        console.warn("Resetting state...")
+
+        data = { tabs: [] }
+        localStorage.setItem("state", JSON.stringify(data))
+    } 
+
+    let { tabs, lastActiveTab } = func({ ...data, tabs: data?.tabs || [] })
     
     tabs = tabs || data?.tabs
     lastActiveTab = lastActiveTab || data?.lastActiveTab

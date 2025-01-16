@@ -2,7 +2,7 @@ import Method from "../components/Method";
 import { request } from "../utils/request";
 import Popup from "../components/Popup"
 import { useEffect, useState } from "react"
-import { parseJson } from "../utils/utils";
+import { parseJson, updateState } from "../utils/utils";
 import { cls } from "../utils/cls";
 import KeyValue from './KeyValue'
 import Body from "./Body";
@@ -52,26 +52,21 @@ export default function Request({ tabId, displayResponse }) {
     }
 
     function saveTabState() {
-        if(!tabId) return;
-        let methods = [ "GET", "POST", "PUT", "PATCH", "DELETE" ]
-        if(!methods.includes(method)) setMethod("GET");
-        
-        let { data } = parseJson(localStorage.getItem("state"))
-        let tabs = data?.tabs || []
-        
-        let found = false
-        tabs = tabs.map(item => {
-            if (item.tabId === tabId) {
-                found = true
-                item = { ...item, method, url, body, headers }
-            }
-            return item
-        })
-        
-        if(!found) tabs.push({ tabId, method, url, body });
+        if (!tabId) return;
 
-        data = { ...data, tabs }
-        localStorage.setItem("state", JSON.stringify(data))
+        updateState(({ tabs }) => {
+            let found = false
+            tabs = tabs.map(item => {
+                if (item.tabId === tabId) {
+                    found = true
+                    item = { ...item, method, url, body, headers }
+                }
+                return item
+            })
+            
+            if(!found) tabs.push({ tabId, method, url, body });
+            return { tabs }
+        })
     }
 
     function getTabState() {

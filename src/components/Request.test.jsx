@@ -19,6 +19,9 @@ describe('Request', () => {
             matches: false
         }));
 
+        global.console.error = vi.fn()
+        global.console.warn = vi.fn()
+
         vi.mock('./Body', () => {
             return {
               default: () => <div></div>
