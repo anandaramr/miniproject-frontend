@@ -52,7 +52,7 @@ export default function ThemeProvider ({ children }) {
         }
     }
 
-    const data = { theme, changeTheme }
+    const data = { theme, changeTheme, getTheme }
     
     return (
         <ThemeContext.Provider value={data}>
