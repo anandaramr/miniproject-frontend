@@ -1,21 +1,22 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import Editor from "../components/Editor";
 import { cls } from "../utils/cls";
 
 export default function Response({ response }) {
 
     const copyMessage = useRef()
+    const [ extension, setExtension ] = useState("txt")
 
     function download() {
-        const contentType = response?.headers?.get('content-type')
+        if (!response) return;
+
+        const contentType = response?.headers['content-type']
         const type = contentType?.split(';')[0].trim() || 'text/plain'
         const downloadData = new Blob([response.data], { type });
         const url = URL.createObjectURL(downloadData);
 
         const link = document.createElement('a');
         link.href = url;
-
-        const extension = type == 'application/json' ? 'json' : type =='text/html' ? 'html' : 'txt'
         link.download = `response.${extension}`;
 
         document.body.appendChild(link);
@@ -35,6 +36,14 @@ export default function Response({ response }) {
             )
         })
     }
+    
+    useEffect(() => {
+        if (!response.headers) return;
+        const contentType = response?.headers['content-type']
+        const type = contentType?.split(';')[0].trim() || 'text/plain'
+        const ext = type == 'application/json' ? 'json' : type =='text/html' ? 'html' : 'txt'
+        setExtension(ext)
+    }, [response])
 
     return (
         <div className="pl-10 pt-3 mt-10 w-full">
@@ -56,7 +65,7 @@ export default function Response({ response }) {
                     </div>
                 </div>
 
-                <Editor value={response.data} language={"json"} readOnly width="700px"/>
+                <Editor value={response.data} language={extension} readOnly width="700px"/>
             </div>}
 
             {response.error &&
