@@ -13,7 +13,9 @@ export default function Request({ tabId, displayResponse }) {
     const [ method, setMethod] = useState("GET")
     const [ url, setUrl ] = useState("")
     const [ body, setBody ] = useState()
-    const [ headers, setHeaders ] = useState({})
+    const [ headers, setHeaders ] = useState([])
+    const [ parameters, setParameters ] = useState([])
+
     const [ isLoading, setIsLoading ] = useState(false)
     
     const [ controller, setController ] = useState()
@@ -114,8 +116,8 @@ export default function Request({ tabId, displayResponse }) {
                 <button onClick={()=> setActive("Body")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Body")&&"underline")}>Body</button>
                 <button onClick={()=> setActive("Headers")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Headers")&&"underline")}>Headers</button>
             </div>  
-            {(active=="Headers")&& <KeyValue item="Headers"/>}
-            {(active=="Parameters")&& <KeyValue item="Parameters"/>}
+            {(active=="Headers")&& <KeyValue item="Headers" setEntries={setHeaders} entries={headers}/>}
+            {(active=="Parameters")&& <KeyValue item="Parameters" setEntries={setParameters} entries={parameters}/>}
             {(active=="Body")&& <Body value={body} language={"json"} setValue={setBody}/>}
         </div>
     )
