@@ -8,7 +8,7 @@ export default function Response({ response }) {
     const [ extension, setExtension ] = useState("txt")
 
     function download() {
-        if (!response) return;
+        if (!response?.headers) return;
 
         const contentType = response?.headers['content-type']
         const type = contentType?.split(';')[0].trim() || 'text/plain'

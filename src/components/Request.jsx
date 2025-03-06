@@ -21,16 +21,18 @@ export default function Request({ tabId, displayResponse }) {
     const [ controller, setController ] = useState()
 
     useEffect(() => {
-        const { method, url, body } = getTabState()
+        const { method, url, body, headers, parameters } = getTabState()
         
         setMethod(method || "GET")
         setUrl(url || "")
         setBody(body || "")
+        setHeaders(headers || [])
+        setParameters(parameters || [])
     }, [tabId])
     
     useEffect(() => {
         saveTabState()
-    }, [method, url, body, headers])
+    }, [method, url, body, headers, parameters])
     
     async function sendRequest() {
         let input = url.trim()
@@ -61,7 +63,7 @@ export default function Request({ tabId, displayResponse }) {
             tabs = tabs.map(item => {
                 if (item.tabId === tabId) {
                     found = true
-                    item = { ...item, method, url, body, headers }
+                    item = { ...item, method, url, body, headers, parameters }
                 }
                 return item
             })

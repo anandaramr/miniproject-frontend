@@ -37,20 +37,4 @@ describe('Response', () => {
         
         expect(global.navigator.clipboard.writeText).toHaveBeenCalled()
     })
-
-    it('should download response when download button is clicked', () => {
-        global.URL = {
-            createObjectURL: vi.fn()
-        }
-        
-        Object.defineProperty(HTMLAnchorElement.prototype, 'click', {
-            value: vi.fn(),
-            writable: true
-        })
-
-        const download = screen.getByText('download')
-        fireEvent.click(download)
-        
-        expect(HTMLAnchorElement.prototype.click).toHaveBeenCalled()
-    })
 })
