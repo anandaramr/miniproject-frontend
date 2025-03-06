@@ -15,9 +15,8 @@ export default function Request({ tabId, displayResponse }) {
     const [ body, setBody ] = useState()
     const [ headers, setHeaders ] = useState([])
     const [ parameters, setParameters ] = useState([])
-
+    const [ proxy, setProxy ] = useState(false)
     const [ isLoading, setIsLoading ] = useState(false)
-    
     const [ controller, setController ] = useState()
 
     useEffect(() => {
@@ -113,10 +112,16 @@ export default function Request({ tabId, displayResponse }) {
                 <input onChange={(evt) => setUrl(evt.target.value)} value={url} onKeyDown={handleKeyBinding} type="text" className="rounded-md text-sm py-1.5 w-[500px] dark:border-zinc-700 outline-none px-3 border-zinc-300 border-[1px] dark:bg-lightblack"/>
                 <button onClick={handleButtonClick} disabled={!url?.trim()} className="font-medium rounded-lg py-1.5 dark:border-zinc-700 w-28 text-white border-zinc-300 border-[1px] bg-rose-400 hover:bg-rose-500 duration-200 disabled:opacity-50">{isLoading ? "Cancel" : "Send"}</button>
             </div>
-            <div className="flex text-sm text-zinc-300">
-                <button onClick={()=> setActive("Parameters")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Parameters")&&"underline")}>Parameters</button>
-                <button onClick={()=> setActive("Body")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Body")&&"underline")}>Body</button>
-                <button onClick={()=> setActive("Headers")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Headers")&&"underline")}>Headers</button>
+            <div className="flex text-sm text-zinc-300 justify-between">
+                <div>
+                    <button onClick={()=> setActive("Parameters")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Parameters")&&"underline")}>Parameters</button>
+                    <button onClick={()=> setActive("Body")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Body")&&"underline")}>Body</button>
+                    <button onClick={()=> setActive("Headers")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Headers")&&"underline")}>Headers</button>
+                </div>
+                <div className="flex gap-2 mr-5 ">
+                    <input type="checkbox" checked={proxy} onChange={()=>setProxy((proxy)=>!proxy)}/>
+                    <label>Proxy</label>
+                </div>
             </div>  
             {(active=="Headers")&& <KeyValue item="Headers" setEntries={setHeaders} entries={headers}/>}
             {(active=="Parameters")&& <KeyValue item="Parameters" setEntries={setParameters} entries={parameters}/>}
