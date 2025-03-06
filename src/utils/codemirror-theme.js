@@ -19,6 +19,10 @@ export const editorDarkTheme = createTheme({
 		{ tag: t.brace, color: '#eba2b1' },
 		{ tag: t.squareBracket, color: '#d18a99' },
 		{ tag: t.punctuation, color: '#d18a99' },
+		{ tag: t.angleBracket, color: '#ffccd5' },
+		{ tag: t.compareOperator, color: '#ffccd5' },
+		{ tag: t.logicOperator, color: '#ffccd5' },
+		{ tag: t.arithmeticOperator, color: '#ffccd5' },
 	],
 });
 
@@ -40,5 +44,9 @@ export const editorLightTheme = createTheme({
 		{ tag: t.brace, color: '#a85867' },
 		{ tag: t.squareBracket, color: '#a85867' },
 		{ tag: t.punctuation, color: '#a85867' },
+		{ tag: t.angleBracket, color: '#9d8189' },
+		{ tag: t.compareOperator, color: '#9d8189' },
+		{ tag: t.logicOperator, color: '#9d8189' },
+		{ tag: t.arithmeticOperator, color: '#9d8189' },
 	],
 });

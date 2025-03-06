@@ -51,8 +51,8 @@ export async function request(url, method, body, headers, controller) {
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )
     if (response.error) return response;
 
-    const { status: statusCode, statusText, ok } = response;
-    const { responseHeaders } = response
+    unwrapHeaders(response)
+    const { status: statusCode, statusText, ok, headers: resHeaders } = response;
 
     let data
     
@@ -63,7 +63,7 @@ export async function request(url, method, body, headers, controller) {
         data = await response.text()
     }
 
-    return { data, statusCode, statusText, ok, headers: responseHeaders }
+    return { data, statusCode, statusText, ok, headers: resHeaders }
 }
 
 /**
@@ -89,4 +89,8 @@ function isJsonType(response) {
 
     const types = contentType.split(';')
     return types.filter(item => item.trim()=='application/json').length!=0
+}
+
+function unwrapHeaders(data) {
+    data.headers.forEach((val, header) => data.headers[header] = val)
 }
