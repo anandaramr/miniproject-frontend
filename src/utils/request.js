@@ -42,10 +42,12 @@
  *   console.error('Request aborted:', error);
  * }
  */
-export async function request(url, method, body, headers, controller) {
+export async function request(url, method, body, headers, controller, proxy) {
     if(!method) method = 'GET';
     let reqHeaders = new Headers(headers)
     if(method=='GET') body = null;
+
+    if (proxy) url = import.meta.env.VITE_SERVER + '/proxy?url=' + url
 
     const request = new Request(url, { method, body, reqHeaders, signal: controller.signal })
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )

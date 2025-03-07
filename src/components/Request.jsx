@@ -49,7 +49,7 @@ export default function Request({ tabId, displayResponse }) {
         setController(controller)
 
         const savedTabId = tabId
-        const response = await request(input, method, body, reqHeaders, controller).finally(() => setIsLoading(false))
+        const response = await request(input, method, body, reqHeaders, controller, proxy).finally(() => setIsLoading(false))
 
         displayResponse(savedTabId, response)
     }
