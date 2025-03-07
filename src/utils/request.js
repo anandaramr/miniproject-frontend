@@ -44,12 +44,25 @@
  */
 export async function request(url, method, body, headers, controller, proxy) {
     if(!method) method = 'GET';
-    let reqHeaders = new Headers(headers)
-    if(method=='GET') body = null;
+    if(method=='GET') body = undefined
 
-    if (proxy) url = import.meta.env.VITE_SERVER + '/proxy?url=' + url
+    let request;
+    if (proxy) {
+        const proxyServer = import.meta.env.VITE_SERVER + '/proxy'
+        const requestBody = JSON.stringify({ url, method, body, headers })
+        request = new Request(proxyServer, { 
+            method: "POST", 
+            body: requestBody, 
+            headers: { 
+                'content-type': 'application/json' 
+            }, 
+            signal: controller.signal 
+        })
+    } else {
+        let reqHeaders = new Headers(headers)
+        request = new Request(url, { method, body, headers: reqHeaders, signal: controller.signal })
+    }
 
-    const request = new Request(url, { method, body, reqHeaders, signal: controller.signal })
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )
     if (response.error) return response;
 
