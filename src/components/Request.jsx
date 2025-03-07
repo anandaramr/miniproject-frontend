@@ -42,7 +42,7 @@ export default function Request({ tabId, displayResponse }) {
         
         if(!input.startsWith("http://") && !input.startsWith("https://")) input = "https://" + url;
         setUrl(input)
-        const reqHeaders = { ...headers, 'Content-Type': 'application/json' }
+        const reqHeaders = { ...parseHeaders(headers), 'content-type': 'application/json' }
         setIsLoading(true)
 
         const controller = new AbortController()
@@ -52,6 +52,16 @@ export default function Request({ tabId, displayResponse }) {
         const response = await request(input, method, body, reqHeaders, controller, proxy).finally(() => setIsLoading(false))
 
         displayResponse(savedTabId, response)
+    }
+
+    function parseHeaders(input) {
+        const headers = {}
+        input.forEach(item => {
+            if (!item[0]) return;
+            if (!item[1]) item[1] = ""
+            headers[item[0]] = item[1]
+        })
+        return headers
     }
 
     function saveTabState() {
