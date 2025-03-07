@@ -6,6 +6,7 @@ import { parseJson, updateState } from "../utils/utils";
 import { cls } from "../utils/cls";
 import KeyValue from './KeyValue'
 import Body from "./Body";
+import ContentType from "./ContentType";
 
 export default function Request({ tabId, displayResponse }) {
 
@@ -18,6 +19,7 @@ export default function Request({ tabId, displayResponse }) {
     const [ proxy, setProxy ] = useState(false)
     const [ isLoading, setIsLoading ] = useState(false)
     const [ controller, setController ] = useState()
+    const [ content, setContent ] = useState("appliction/json")
 
     useEffect(() => {
         const { method, url, body, headers, parameters } = getTabState()
@@ -113,6 +115,9 @@ export default function Request({ tabId, displayResponse }) {
     }
 
     const methodButton =<div className="py-1.5 rounded-md px-7 dark:hover:bg-zinc-900 duration-200 dark:border-zinc-600 border-zinc-300 border-[1px] flex flex-col justify-center w-28 dark:bg-lightblack">{method}</div>
+    const contentType =<div className="text-zinc-500 rounded-sm dark:hover:bg-zinc-900 duration-200 flex gap-2 items-center justify-center dark:bg-lightblack w-32">{content}<span class="material-symbols-outlined">arrow_drop_down</span></div>
+    
+
     return (
         <div className="w-fit px-5 mt-3 border-r-[1px] border-zinc-700 border-opacity-20">
             <div className="flex gap-2 mb-3">
@@ -128,9 +133,16 @@ export default function Request({ tabId, displayResponse }) {
                     <button onClick={()=> setActive("Body")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Body")&&"underline")}>Body</button>
                     <button onClick={()=> setActive("Headers")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Headers")&&"underline")}>Headers</button>
                 </div>
-                <div className="flex gap-2 mr-5 ">
-                    <input type="checkbox" checked={proxy} onChange={()=>setProxy((proxy)=>!proxy)}/>
-                    <label>Proxy</label>
+                <div className="flex gap-4 mr-5 items-center">
+                    <div className="flex items-center">
+                        <Popup collapsible title={contentType}>
+                            <ContentType setContent={setContent}/>
+                        </Popup>
+                    </div>
+                    <div className="flex gap-2">
+                        <input type="checkbox" checked={proxy} onChange={()=>setProxy((proxy)=>!proxy)}/>
+                        <label>Proxy</label>
+                    </div>
                 </div>
             </div>  
             {(active=="Headers")&& <KeyValue item="Headers" setEntries={setHeaders} entries={headers}/>}
