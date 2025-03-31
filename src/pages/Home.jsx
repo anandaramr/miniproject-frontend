@@ -4,6 +4,7 @@ import Request from "../components/Request";
 import Response from "../components/Response";
 import { generateId, parseJson, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
+import Dialog from './Dialog.jsx'
 
 function Home() {
 
@@ -11,6 +12,7 @@ function Home() {
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
 	const tabRef = useRef()
+	const [dialog, setDialog] = useState(false)
 	
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
@@ -99,9 +101,24 @@ function Home() {
 		}
 	}
 
+	function run()
+	{
+		setDialog(true)
+	}
+
 	return (
-		<div className="p-2">
+		<div className="">
+			{dialog && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+				<Dialog setDialog={setDialog}/>
+			</div>}
+
 			<NavBar/>
+			{/* RUN all */}
+			<button onClick={run} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
+				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
+				<p className="text-emerald-50">Run all</p>
+			</button>
 
 			<div className="px-8">
 				<div className="flex my-3">
