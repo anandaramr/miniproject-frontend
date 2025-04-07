@@ -13,7 +13,8 @@ function Home() {
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
 	const [ dialog, setDialog ] = useState(false)
-	const [ proxy, setProxy ] = useState()
+	const [ proxy, setProxy ] = useState(false)
+	const [ dragIdx, setDragIdx ] = useState()
 	
 	const tabRef = useRef()
 
@@ -139,6 +140,17 @@ function Home() {
 		setTabs(JSON.parse(localStorage.getItem("state") || "")?.tabs)
 	}
 
+	function onDrop(idx) {
+		if (dragIdx == idx) return;
+
+		setTabs(tabs => {
+			const updatedTabs = [...tabs]
+			const [ movedTab ] = updatedTabs.splice(dragIdx, 1)
+			updatedTabs.splice(idx, 0, movedTab)
+			return updatedTabs
+		})
+	}
+
 	return (
 		<div className="">
 			
@@ -156,7 +168,7 @@ function Home() {
 			<div className="px-8">
 				<div className="flex my-3">
 					<div ref={tabRef} onWheel={evt => tabRef.current.scrollLeft +=  evt.deltaY} className="flex overflow-scroll relative">
-						{tabs?.map(({ tabId, title }) => <Tab key={tabId} id={tabId} title={title} active={tabId==currentTab} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} />)}
+						{tabs?.map(({ tabId, title }, idx) => <Tab key={tabId} id={tabId} title={title} active={tabId==currentTab} onClick={() => selectTab(tabId)} close={() => closeTab(tabId)} onDragStart={() => setDragIdx(idx)} onDrop={() => onDrop(idx)} />)}
 					</div>
 					<div>
 						<span onClick={newTab} className="border-[1px] dark:border-zinc-800 rounded-sm px-3 py-1 cursor-pointer select-none text-zinc-500 flex items-center"><span>+</span></span>
