@@ -43,6 +43,7 @@
  * }
  */
 export async function request(url, method, body, headers, controller, proxy) {
+    if (!url) return {};
     if(!method) method = 'GET';
     if(method=='GET') body = undefined
 
@@ -55,12 +56,12 @@ export async function request(url, method, body, headers, controller, proxy) {
             method: "POST", 
             body: requestBody, 
             headers: { 'content-type': 'application/json' }, 
-            signal: controller.signal 
+            signal: controller?.signal 
         })
     } else {
 
         let reqHeaders = new Headers(headers)
-        request = new Request(url, { method, body, headers: reqHeaders, signal: controller.signal })
+        request = new Request(url, { method, body, headers: reqHeaders, signal: controller?.signal })
     }
     
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )
