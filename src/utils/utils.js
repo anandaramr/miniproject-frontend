@@ -85,3 +85,61 @@ export const setCookie = (key,value) => {
 export const removeCookie = (key) => {
     document.cookie = `${key}=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`
 }
+
+export function convertToOpenAPI(requests) {
+    const paths = {};
+  
+    requests.forEach((req) => {
+        if (!req.url || !req.method) return;
+
+        const url = new URL(req.url);
+        const path = url.pathname || "/";
+        const method = req.method.toLowerCase();
+
+        if (!paths[path]) paths[path] = {};
+
+        const responseSchema = inferSchemaFromResponse(req.response?.data);
+
+        paths[path][method] = {
+        summary: req.title || `Call to ${req.url}`,
+        parameters: [],
+        responses: {
+            [req.response?.statusCode || 200]: {
+            description: req.response?.statusText || "Response",
+            schema: responseSchema || { type: "string" }
+            }
+        }
+        };
+    });
+  
+    return JSON.stringify({
+        swagger: "2.0",
+        info: {
+            title: "Converted API",
+            version: "1.0.0"
+        },
+        paths: paths
+    });
+}
+  
+function inferSchemaFromResponse(data) {
+    try {
+        const parsed = JSON.parse(data);
+        if (Array.isArray(parsed)) {
+            return {
+                type: "array",
+                items: inferSchemaFromResponse(JSON.stringify(parsed[0]))
+            };
+        } else if (typeof parsed === "object") {
+            const properties = {};
+            for (const key in parsed) {
+                properties[key] = { type: typeof parsed[key] };
+            }
+            return { type: "object", properties };
+        }
+    } catch (e) {
+        console.log(e)
+    }
+    return { type: "string" };
+}
+  
