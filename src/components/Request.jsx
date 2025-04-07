@@ -19,7 +19,7 @@ export default function Request({ tabId, displayResponse }) {
     const [ proxy, setProxy ] = useState(false)
     const [ isLoading, setIsLoading ] = useState(false)
     const [ controller, setController ] = useState()
-    const [ content, setContent ] = useState("appliction/json")
+    const [ content, setContent ] = useState("application/json")
 
     useEffect(() => {
         const { method, url, body, headers, parameters } = getTabState()
