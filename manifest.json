@@ -1,6 +1,6 @@
 {
-    "short_name": "ButterScotch",
-    "name": "ButterScotch API Client",
+    "short_name": "REST",
+    "name": "REST API Client",
     "icons": [
       {
         "src": "/favicon-194x194.png",
