@@ -6,6 +6,9 @@ import { generateId, parseJson, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Dialog from '../components/Dialog'
 import { request } from "../utils/request.js";
+import Login from "../components/Login.jsx";
+import Signup from "../components/Signup.jsx";
+
 
 function Home() {
 
@@ -14,6 +17,8 @@ function Home() {
 	const [ currentTab, setCurrentTab ] = useState()
 	const tabRef = useRef()
 	const [dialog, setDialog] = useState(false)
+	const [login, setLogin] = useState(false)
+	const [signup, setSignup] = useState(false)
 	const [proxy, setProxy] = useState(false)
 	
 
@@ -122,10 +127,19 @@ function Home() {
 			{dialog && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 				<Dialog setDialog={setDialog}/>
-
 			</div>}
 
-			<NavBar/>
+			{login && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+				<Login setLogin={setLogin} setSignup={setSignup}/>
+			</div>}
+
+			{signup && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+				<Signup setSignup={setSignup}/>
+			</div>}
+
+			<NavBar setLogin={setLogin}/>
 			{/* RUN all */}
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
