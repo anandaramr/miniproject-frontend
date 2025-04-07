@@ -44,27 +44,28 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
         
         if(!input.startsWith("http://") && !input.startsWith("https://")) input = "https://" + url;
         setUrl(input)
-        const reqHeaders = { ...parseHeaders(headers) }
+        const reqHeaders = { ...parseKeyValPairs(headers), 'content-type': content }
+        const reqParams = parseKeyValPairs(parameters)
         setIsLoading(true)
 
         const controller = new AbortController()
         setController(controller)
 
         const savedTabId = tabId
-        const response = await request(input, method, body, reqHeaders, controller, proxy).finally(() => setIsLoading(false))
+        const response = await request(input, method, body, reqHeaders, reqParams, controller, proxy).finally(() => setIsLoading(false))
         if (!response.ok && response.error?.name == "AbortError") return;
 
         displayResponse(savedTabId, response)
     }
 
-    function parseHeaders(input) {
-        const headers = {}
+    function parseKeyValPairs(input) {
+        const result = {}
         input.forEach(item => {
             if (!item[0]) return;
             if (!item[1]) item[1] = ""
-            headers[item[0]] = item[1]
+            result[item[0]] = item[1]
         })
-        return headers
+        return result
     }
 
     function saveTabState() {
