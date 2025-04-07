@@ -32,11 +32,12 @@ export function updateState(func) {
         localStorage.setItem("state", JSON.stringify(data))
     } 
 
-    let { tabs, lastActiveTab } = func({ ...data, tabs: data?.tabs || [] })
+    let { tabs, proxy, lastActiveTab } = func({ ...data, tabs: data?.tabs || [] }) || {}
     
     tabs = tabs || data?.tabs
+    proxy = proxy===undefined ? data?.proxy : proxy
     lastActiveTab = lastActiveTab || data?.lastActiveTab
-    localStorage.setItem("state", JSON.stringify({ lastActiveTab, tabs }))
+    localStorage.setItem("state", JSON.stringify({ lastActiveTab, proxy, tabs }))
 }
 
 /**
