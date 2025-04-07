@@ -8,7 +8,7 @@ import KeyValue from './KeyValue'
 import Body from "./Body";
 import ContentType from "./ContentType";
 
-export default function Request({ tabId, displayResponse }) {
+export default function Request({ tabId, displayResponse, setProxy, proxy }) {
 
     const [ active, setActive] = useState("Body")
     const [ method, setMethod] = useState("GET")
@@ -16,7 +16,6 @@ export default function Request({ tabId, displayResponse }) {
     const [ body, setBody ] = useState()
     const [ headers, setHeaders ] = useState([])
     const [ parameters, setParameters ] = useState([])
-    const [ proxy, setProxy ] = useState(false)
     const [ isLoading, setIsLoading ] = useState(false)
     const [ controller, setController ] = useState()
     const [ content, setContent ] = useState("application/json")
@@ -30,6 +29,7 @@ export default function Request({ tabId, displayResponse }) {
         setHeaders(headers || [])
         setParameters(parameters || [])
     }, [tabId])
+
     
     useEffect(() => {
         saveTabState()
@@ -140,7 +140,7 @@ export default function Request({ tabId, displayResponse }) {
                         </Popup>
                     </div>
                     <div className="flex gap-2">
-                        <input type="checkbox" checked={proxy} onChange={()=>setProxy((proxy)=>!proxy)}/>
+                        <input type="checkbox" checked={proxy} onChange={()=>{setProxy((proxy)=>!proxy)}}/>
                         <label>Proxy</label>
                     </div>
                 </div>

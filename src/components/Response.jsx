@@ -7,14 +7,12 @@ export default function Response({ response }) {
     const copyMessage = useRef()
     const [ extension, setExtension ] = useState("txt")
     const [ showResponse, setShowResponse ] = useState("response")
-    const headerPair = [
-        ["Derek", "It's a beautiful day to save lives."],  
-        ["Meredith", "Pick me. Choose me. Love me."],
-        ["Cristina", "You are the sun."],
-        ["Mark", "If you love someone, tell them."],
-        ["Bailey", "You're going to be the person who saves his life."], 
-        ["Alex", "You don't get to call me a loser."]  
-    ];
+    const [headers, setHeaders] = useState();
+
+    useEffect(()=>{
+        setHeaders(response.headers)
+    },[response])
+    
       
             
 
@@ -81,10 +79,11 @@ export default function Response({ response }) {
                 </div>}
                 {showResponse=="headers" && <div className="flex flex-col justify-between">
                     <p className="mt-5 mb-2 text-xs font-bold border-b-[1.5px] border-zinc-800 py-1 px-2 text-zinc-400">Headers List</p>
-                    {headerPair.map((item)=>
+                    {/* {console.log(headers)} */}
+                    {headers && Object.keys(headers).map((item)=>
                     <div className="flex gap-3 text-xs my-2">
-                        <div className="font-semibold text-zinc-400 border-zinc-700 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[40%]">{item[0]}</div>
-                        <div className="border-zinc-700 text-zinc-400 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[80%]">{item[1]}</div>
+                        <div className="font-semibold text-zinc-400 border-zinc-700 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[40%]">{item}</div>
+                        <div className="border-zinc-700 text-zinc-400 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[80%]">{headers[item]}</div>
                     </div>)}
                 </div>}
 
