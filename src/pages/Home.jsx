@@ -1,5 +1,5 @@
 import NavBar from "../components/NavBar";
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
 import { generateId, parseJson, updateState } from "../utils/utils";
@@ -8,7 +8,8 @@ import Run from '../components/Run'
 import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
-
+import AuthContext from "../context/AuthContext.jsx";
+import { addCollaborator, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
 
 function Home() {
 
@@ -16,12 +17,16 @@ function Home() {
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
 	const [login, setLogin] = useState(false)
+
 	const [signup, setSignup] = useState(false)
 	const [ dialog, setDialog ] = useState(false)
-	const [ proxy, setProxy ] = useState(false)
+	const [ proxy, setProxy ] = useState()
 	const [ dragIdx, setDragIdx ] = useState()
+
+	const [ projects, setProjects ] = useState([])
 	
 	const tabRef = useRef()
+	const { user } = useContext(AuthContext)
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
@@ -35,6 +40,18 @@ function Home() {
 		setProxy(data.proxy)
 		setTabs(data.tabs || [{ tabId: 1 }])
 	}, [])
+
+	useEffect(() => {
+		if (!user) return;
+
+		getMyProjects().then(projects => {
+			setProjects(projects)
+			console.log(projects)
+
+			// updateProject(projects[0].projectId, JSON.parse(localStorage.getItem("state"))?.tabs)
+			getCollaborators(projects[1].projectId)
+		})
+	}, [user])
 
 	useEffect(() => {
         const { data } = parseJson(localStorage.getItem("state"))
@@ -158,7 +175,7 @@ function Home() {
 
 	return (
 		<div className="">
-			
+
 			{dialog && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 				<Run setDialog={setDialog} tabs={tabs} run={runAll}/>

@@ -143,7 +143,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
                         </Popup>
                     </div>
                     <div className="flex gap-2">
-                        <input type="checkbox" checked={proxy} onChange={()=>{setProxy((proxy)=>!proxy)}}/>
+                        <input type="checkbox" checked={proxy || false} onChange={()=>{setProxy((proxy)=>!proxy)}}/>
                         <label>Proxy</label>
                     </div>
                 </div>
