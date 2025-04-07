@@ -44,7 +44,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy }) {
         
         if(!input.startsWith("http://") && !input.startsWith("https://")) input = "https://" + url;
         setUrl(input)
-        const reqHeaders = { ...parseHeaders(headers), 'content-type': 'application/json' }
+        const reqHeaders = { ...parseHeaders(headers) }
         setIsLoading(true)
 
         const controller = new AbortController()
