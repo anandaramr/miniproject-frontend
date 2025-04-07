@@ -44,7 +44,7 @@ export default function Request({ tabId, displayResponse }) {
         
         if(!input.startsWith("http://") && !input.startsWith("https://")) input = "https://" + url;
         setUrl(input)
-        const reqHeaders = { ...parseHeaders(headers), 'content-type': 'application/json' }
+        const reqHeaders = { ...parseHeaders(headers) }
         setIsLoading(true)
 
         const controller = new AbortController()
@@ -115,7 +115,7 @@ export default function Request({ tabId, displayResponse }) {
     }
 
     const methodButton =<div className="py-1.5 rounded-md px-7 dark:hover:bg-zinc-900 duration-200 dark:border-zinc-600 border-zinc-300 border-[1px] flex flex-col justify-center w-28 dark:bg-lightblack">{method}</div>
-    const contentType =<div className="text-zinc-500 rounded-sm dark:hover:bg-zinc-900 duration-200 flex gap-2 items-center justify-center dark:bg-lightblack w-32">{content}<span class="material-symbols-outlined">arrow_drop_down</span></div>
+    const contentType =<div className="text-zinc-500 rounded-sm dark:hover:bg-zinc-900 duration-200 flex gap-2 items-center justify-center dark:bg-lightblack w-32">{content}<span className="material-symbols-outlined">arrow_drop_down</span></div>
     
 
     return (

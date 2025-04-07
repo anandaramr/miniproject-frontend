@@ -50,19 +50,18 @@ export async function request(url, method, body, headers, controller, proxy) {
     if (proxy) {
         const proxyServer = import.meta.env.VITE_SERVER + '/proxy'
         const requestBody = JSON.stringify({ url, method, body, headers })
+
         request = new Request(proxyServer, { 
             method: "POST", 
             body: requestBody, 
-            headers: { 
-                'content-type': 'application/json' 
-            }, 
+            headers: { 'content-type': 'application/json' }, 
             signal: controller.signal 
         })
     } else {
         let reqHeaders = new Headers(headers)
         request = new Request(url, { method, body, headers: reqHeaders, signal: controller.signal })
     }
-
+    
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )
     if (response.error) return response;
 
