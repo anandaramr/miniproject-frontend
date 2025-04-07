@@ -76,7 +76,10 @@ function Home() {
 			const lastActiveTab = newTabId
 			
 			tabs = tabs || []
-			tabs = [ ...tabs, { tabId: newTabId }]
+
+			const welcomeUrl = `${import.meta.env.VITE_SERVER}/echo`
+			tabs = [ ...tabs, { tabId: newTabId, url: welcomeUrl }]
+			
 			return { lastActiveTab, tabs }
 		})
 	}
