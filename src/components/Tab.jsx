@@ -37,7 +37,7 @@ export default function Tab({ id, title, active, onClick, close }) {
     return (
         <div draggable={!renameMode} onClick={onClick} className={cls("gap-5 flex items-center border-[1px] dark:border-zinc-800 rounded-sm px-3 py-1 cursor-pointer select-none", active && "bg-zinc-300 dark:bg-zinc-800")}>
             {!renameMode && <span onDoubleClick={() => setRenameMode(true)} className={cls("w-[60px]", active ? "dark:text-zinc-400 text-zinc-800" : "text-zinc-500")}>{tabName || "Untitled"}</span>}
-            {renameMode && <input className="w-[60px] bg-transparent text-zinc-800 dark:text-zinc-400 caret-zinc-800 dark:caret-white outline-none" onClick={rename} onBlur={() => setRenameMode(false)} onKeyDown={handleKeyDown} defaultValue={tabName || "Untitled"} spellCheck={false} autoFocus  />}
+            {renameMode && <input className="w-[60px] bg-transparent text-zinc-800 dark:text-zinc-400 caret-zinc-800 dark:caret-white outline-none" onClick={rename} onFocus={(evt) => evt.target.select()} onBlur={() => setRenameMode(false)} onKeyDown={handleKeyDown} defaultValue={tabName || "Untitled"} spellCheck={false} autoFocus  />}
             <span onClick={closeSelf} className="text-base hover:text-rose-400 duration-200 text-zinc-500 material-symbols-outlined">close</span>
         </div>
     )
