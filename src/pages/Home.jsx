@@ -4,7 +4,8 @@ import Request from "../components/Request";
 import Response from "../components/Response";
 import { generateId, parseJson, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
-import Dialog from './Dialog.jsx'
+import Dialog from '../components/Dialog'
+import { request } from "../utils/request.js";
 
 function Home() {
 
@@ -13,7 +14,9 @@ function Home() {
 	const [ currentTab, setCurrentTab ] = useState()
 	const tabRef = useRef()
 	const [dialog, setDialog] = useState(false)
+	const [proxy, setProxy] = useState(false)
 	
+
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
 		if(!data || !data.tabs?.length) {
@@ -101,21 +104,30 @@ function Home() {
 		}
 	}
 
-	function run()
+	function runAll()
 	{
+		//body, headers, controller, proxy
 		setDialog(true)
+		const state = JSON.parse(localStorage.getItem("state"));
+		const tab = state.tabs
+		tab.map(async(item,index)=>{
+			const res = await request(item.url,item.method,item.body,item.headers,new AbortController(),proxy)
+			displayResponse(tab[index].tabId,res)
+		})
 	}
 
 	return (
 		<div className="">
+			
 			{dialog && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 				<Dialog setDialog={setDialog}/>
+
 			</div>}
 
 			<NavBar/>
 			{/* RUN all */}
-			<button onClick={run} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
+			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
 				<p className="text-emerald-50">Run all</p>
 			</button>
@@ -131,7 +143,7 @@ function Home() {
 				</div>
 				
 				<div className="flex">
-					<Request tabId={currentTab} displayResponse={displayResponse} />
+					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} />
 					<Response tabId={currentTab} response={response} />
 				</div>
 			</div>

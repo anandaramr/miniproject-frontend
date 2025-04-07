@@ -59,6 +59,7 @@ export async function request(url, method, body, headers, controller, proxy) {
             signal: controller.signal 
         })
     } else {
+
         let reqHeaders = new Headers(headers)
         request = new Request(url, { method, body, headers: reqHeaders, signal: controller.signal })
     }
@@ -77,7 +78,6 @@ export async function request(url, method, body, headers, controller, proxy) {
     } else {
         data = await response.text()
     }
-
     return { data, statusCode, statusText, ok, headers: resHeaders }
 }
 
