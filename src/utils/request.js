@@ -42,11 +42,13 @@
  *   console.error('Request aborted:', error);
  * }
  */
-export async function request(url, method, body, headers, controller, proxy) {
+export async function request(url, method, body, headers, params, controller, proxy) {
     if (!url) return {};
     if(!method) method = 'GET';
     if(method=='GET') body = undefined
 
+    url += '?' + new URLSearchParams(params).toString()
+    
     let request;
     if (proxy) {
         const proxyServer = import.meta.env.VITE_SERVER + '/proxy'
