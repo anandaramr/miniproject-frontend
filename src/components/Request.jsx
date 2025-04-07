@@ -8,7 +8,7 @@ import KeyValue from './KeyValue'
 import Body from "./Body";
 import ContentType from "./ContentType";
 
-export default function Request({ tabId, displayResponse, setProxy, proxy }) {
+export default function Request({ tabId, displayResponse, setProxy, proxy, updateTabs }) {
 
     const [ active, setActive] = useState("Body")
     const [ method, setMethod] = useState("GET")
@@ -52,6 +52,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy }) {
 
         const savedTabId = tabId
         const response = await request(input, method, body, reqHeaders, controller, proxy).finally(() => setIsLoading(false))
+        if (!response.ok && response.error?.name == "AbortError") return;
 
         displayResponse(savedTabId, response)
     }
@@ -68,7 +69,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy }) {
 
     function saveTabState() {
         if (!tabId) return;
-
+        
         updateState(({ tabs }) => {
             let found = false
             tabs = tabs.map(item => {
@@ -82,6 +83,8 @@ export default function Request({ tabId, displayResponse, setProxy, proxy }) {
             if(!found) tabs.push({ tabId, method, url, body });
             return { tabs }
         })
+
+        updateTabs()
     }
 
     function getTabState() {

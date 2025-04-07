@@ -11,10 +11,7 @@ export default function Response({ response }) {
 
     useEffect(()=>{
         setHeaders(response.headers)
-    },[response])
-    
-      
-            
+    },[response])           
 
     function download() {
         if (!response?.headers) return;
@@ -79,7 +76,6 @@ export default function Response({ response }) {
                 </div>}
                 {showResponse=="headers" && <div className="flex flex-col justify-between">
                     <p className="mt-5 mb-2 text-xs font-bold border-b-[1.5px] border-zinc-800 py-1 px-2 text-zinc-400">Headers List</p>
-                    {/* {console.log(headers)} */}
                     {headers && Object.keys(headers).map((item)=>
                     <div className="flex gap-3 text-xs my-2">
                         <div className="font-semibold text-zinc-400 border-zinc-700 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[40%]">{item}</div>
@@ -91,7 +87,7 @@ export default function Response({ response }) {
 
             {response.error &&
             <div className="flex justify-center items-center text-3xl text-gray-600 gap-3 h-[60%]">
-                <span className="font-bold">Error:</span><span>{response.error.message || "Unable to fetch endpoint"} :&#40;</span>
+                <span className="font-bold">Error:</span><span>{response.error?.message || "Unable to fetch endpoint"} :&#40;</span>
             </div>
             }
         </div>

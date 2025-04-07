@@ -26,11 +26,11 @@ describe('Request', () => {
             return {
               default: () => <div></div>
             };
-        });          
+        });  
     });
 
     beforeEach(() => {
-        ({ rerender } = render(<ThemeProvider><Request tabId={1} /></ThemeProvider>))
+        ({ rerender } = render(<ThemeProvider><Request tabId={1} updateTabs={() => {}} /></ThemeProvider>))
     })
 
     afterEach(() => {

@@ -4,7 +4,7 @@ import Request from "../components/Request";
 import Response from "../components/Response";
 import { generateId, parseJson, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
-import Dialog from '../components/Dialog'
+import Run from '../components/Run'
 import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
@@ -15,12 +15,12 @@ function Home() {
 	const [ response, setResponse ] = useState({})
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
-	const tabRef = useRef()
-	const [dialog, setDialog] = useState(false)
 	const [login, setLogin] = useState(false)
 	const [signup, setSignup] = useState(false)
-	const [proxy, setProxy] = useState(false)
+	const [ dialog, setDialog ] = useState(false)
+	const [ proxy, setProxy ] = useState()
 	
+	const tabRef = useRef()
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
@@ -31,6 +31,7 @@ function Home() {
 		};
 
 		setCurrentTab(data.lastActiveTab)
+		setProxy(data.proxy)
 		setTabs(data.tabs || [{ tabId: 1 }])
 	}, [])
 
@@ -41,6 +42,12 @@ function Home() {
         const tab = data.tabs?.find(item => item.tabId==currentTab)
         setResponse(tab?.response || {})
     }, [currentTab])
+
+	useEffect(() => {
+		updateState(() => {
+			return { proxy }
+		})
+	}, [proxy])
 
 	function newTab() {
 		updateState(({ tabs }) => {
@@ -109,16 +116,32 @@ function Home() {
 		}
 	}
 
-	function runAll()
-	{
-		//body, headers, controller, proxy
+	async function runAll() {
+		console.log('running')
 		setDialog(true)
-		const state = JSON.parse(localStorage.getItem("state"));
-		const tab = state.tabs
-		tab.map(async(item,index)=>{
-			const res = await request(item.url,item.method,item.body,item.headers,new AbortController(),proxy)
-			displayResponse(tab[index].tabId,res)
+		tabs.map((item) => {
+			item.isLoading = true
+			return item
 		})
+
+		await Promise.all(tabs.map(async (item, idx) => {
+			return makeRequest(item)
+		}))
+		
+		console.log('end')
+		setTabs(tabs => tabs.map(item => {
+			item.isLoading = false
+			return item
+		}))
+	}
+
+	async function makeRequest(item) {
+		const res = await request(item.url,item.method,item.body,item.headers,null,proxy)
+		displayResponse(item.tabId, res)
+	}
+
+	function updateTabs() {
+		setTabs(JSON.parse(localStorage.getItem("state") || "")?.tabs)
 	}
 
 	return (
@@ -126,7 +149,7 @@ function Home() {
 			
 			{dialog && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
-				<Dialog setDialog={setDialog}/>
+				<Run setDialog={setDialog} tabs={tabs} run={runAll}/>
 			</div>}
 
 			{login && <div>
@@ -140,10 +163,10 @@ function Home() {
 			</div>}
 
 			<NavBar setLogin={setLogin}/>
-			{/* RUN all */}
+        
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
-				<p className="text-emerald-50">Run all</p>
+				<p className="text-emerald-50">Run</p>
 			</button>
 
 			<div className="px-8">
@@ -157,7 +180,7 @@ function Home() {
 				</div>
 				
 				<div className="flex">
-					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} />
+					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} updateTabs={updateTabs} />
 					<Response tabId={currentTab} response={response} />
 				</div>
 			</div>
