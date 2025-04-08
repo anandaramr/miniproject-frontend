@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
+import { generateId, getCurrentProject, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Run from '../components/Run'
 import { request } from "../utils/request.js";
@@ -36,18 +36,29 @@ function Home() {
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
-
+		
 		setCurrentTab(data?.lastActiveTab)
 		setProxy(data?.proxy)
-		setTabs(data?.tabs || [])
+		
+        const currentProject = getCurrentProject(projects)
+		if (!currentProject) {
+			setTabs(data?.tabs || [])
+			return;
+		}
+		
+        try {
+			const tabs = JSON.parse(currentProject?.state || "[]")
+			setTabs(tabs)
+        } catch { 
+			setTabs([]) 
+			return;
+		}
 	}, [projects])
 
 	useEffect(() => {
 		if (!user) return;
 
-		getMyProjects().then(projects => {
-			setProjects(projects)
-		})
+		refreshProjects()
 	}, [user])
 
 	useEffect(() => {
@@ -63,6 +74,11 @@ function Home() {
 			return { proxy }
 		})
 	}, [proxy])
+
+	async function refreshProjects() {
+		const projects = await getMyProjects()
+		setProjects(projects)
+	}
 
 	function newTab() {
 		updateState(({ tabs }) => {

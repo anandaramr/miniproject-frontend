@@ -4,7 +4,7 @@ import ThemeSelector from "./ThemeSelector"
 import Popup from "./Popup"
 import AuthContext from "../context/AuthContext"
 import Projects from "./Projects"
-import { convertToOpenAPI, getLastActiveProject, setLastActiveProject } from "../utils/utils"
+import { convertToOpenAPI, getCurrentProject } from "../utils/utils"
 
 export default function NavBar({ setLogin, projects, setTabs, setProjects, setCurrentTab, saveProject, newProject, setCollaborators, setRenameProject, setDeleteProject }) {
 
@@ -14,22 +14,9 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
     const [ projectName, setProjectName ] = useState()
 
     useEffect(() => {
-        if (!projects[0]) return;
-        
-        let currentProjectId = getLastActiveProject()
-        if (!currentProjectId) {
-            currentProjectId = projects[0]?.projectId
-            setLastActiveProject(currentProjectId)
-        }
-
-        const currentProject = projects.find(item => item.projectId == currentProjectId) || projects[0]
+        const currentProject = getCurrentProject(projects)
+        if (!currentProject) return;
         setProjectName(currentProject?.projectName || "Untitled")
-
-        try {
-            setTabs(JSON.parse(currentProject?.state) || [])
-        } catch {
-            setTabs([])
-        }
     }, [projects])
     
     useEffect(() => {
@@ -63,7 +50,7 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
         document.body.removeChild(link);
     }
 
-    return(
+   return (
         <div className="h-[7svh] flex justify-between py-9 gap-6 items-center px-2 dark:text-zinc-400">
             {user && <div className="flex gap-5 items-center">
                 <Popup collapsible title={<div className="flex items-center justify-center gap-1 px-3"><div className="dark:text-zinc-400 duration-150 hover:text-zinc-200 text-zinc-700 text-xl">{projectName}</div><span className="material-symbols-outlined">keyboard_arrow_down</span></div>}>
