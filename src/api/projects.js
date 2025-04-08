@@ -52,7 +52,7 @@ export async function removeCollaborator(projectId, username) {
         return { error: err.response.data }
     })
 }
-
+    
 export async function getCollaborators(projectId) {
     axiosJwt.get(`/projects/collaborator/${projectId}`)
     .then(res => {
