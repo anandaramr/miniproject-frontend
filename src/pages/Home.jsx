@@ -282,7 +282,7 @@ function Home() {
 
 				{tabs.length==0 && <div className="flex flex-col justify-center items-center h-[50svh]">
 					<div className="text-7xl text-zinc-500 font-cabin">Start Your Project</div>
-					<button onClick={newTab} className="text-3xl font-mono border-2 border-zinc-400 hover:bg-zinc-400 hover:text-zinc-800 duration-200 rounded-xl px-8 py-3 m-5 text-zinc-400">Start!</button>
+					<button onClick={newTab} className="text-3xl font-mono border-2 dark:border-zinc-400 dark:hover:border-zinc-400 border-zinc-500 hover:border-gray-700 hover:bg-gray-700 dark:hover:bg-zinc-400 hover:dark:text-zinc-800 duration-200 rounded-xl px-8 py-3 m-5 text-zinc-800 hover:text-white dark:text-zinc-400">Start!</button>
 				</div> }
 			</div>
 		</div>
