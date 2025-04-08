@@ -26,8 +26,11 @@ export default function Signup({setSignup, setLogin})
         axios.post('/auth/register', data)
         .then(res => {
             if(res.data.error) return setError(res.data.error);
+
             setCookie('auth', res.data.accessToken)
             setCookie('ref', res.data.refreshToken)
+            localStorage.removeItem("state")
+
             authorize()
             setSignup(false)
         })

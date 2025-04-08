@@ -22,8 +22,11 @@ export default function Login({ setLogin, setSignup }) {
         axios.post('/auth/login', data)
         .then(res => {
             if(res.data.error) return setError(res.data.error);
+
             setCookie('auth', res.data.accessToken)
             setCookie('ref', res.data.refreshToken)
+            localStorage.removeItem("state")
+
             authorize()
             setLogin(false)
         })
