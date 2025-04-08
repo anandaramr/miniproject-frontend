@@ -11,6 +11,17 @@ export async function getMyProjects() {
     })
 }
 
+export async function deleteProject(projectId) {
+    return axiosJwt.delete(`/projects/remove/${projectId}`)
+    .then(res => {
+        return res.data
+    })
+    .catch(err => {
+        console.log(err.response.data)
+        return;
+    })
+}
+
 export async function addCollaborator(projectId, username) {
     axiosJwt.post('/projects/collaborator', { projectId, username })
     .then(res => {

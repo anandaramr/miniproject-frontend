@@ -86,6 +86,16 @@ export const removeCookie = (key) => {
     document.cookie = `${key}=; Expires=Thu, 01 Jan 1970 00:00:01 GMT;`
 }
 
+export function parseKeyValPairs(input) {
+    const result = {}
+    input.forEach(item => {
+        if (!item[0]) return;
+        if (!item[1]) item[1] = ""
+        result[item[0]] = item[1]
+    })
+    return result
+}
+
 export function convertToOpenAPI(requests) {
     const paths = {};
   

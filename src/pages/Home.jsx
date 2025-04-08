@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, parseJson, updateState } from "../utils/utils";
+import { generateId, parseJson, parseKeyValPairs, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Run from '../components/Run'
 import { request } from "../utils/request.js";
@@ -52,7 +52,6 @@ function Home() {
 			setProjects(projects)
 			console.log(projects)
 
-			// updateProject(projects[0].projectId, JSON.parse(localStorage.getItem("state"))?.tabs)
 			getCollaborators(projects[1].projectId)
 		})
 	}, [user])
@@ -142,7 +141,6 @@ function Home() {
 	}
 
 	async function runAll() {
-		console.log('running')
 		setDialog(true)
 		tabs.map((item) => {
 			item.isLoading = true
@@ -153,7 +151,6 @@ function Home() {
 			return makeRequest(item)
 		}))
 		
-		console.log('end')
 		setTabs(tabs => tabs.map(item => {
 			item.isLoading = false
 			return item
@@ -161,7 +158,9 @@ function Home() {
 	}
 
 	async function makeRequest(item) {
-		const res = await request(item.url,item.method,item.body,item.headers,null,proxy)
+		const headers = { ...parseKeyValPairs(item.headers), 'content-type': item.content }
+		const params = parseKeyValPairs(item.parameters)
+		const res = await request(item.url, item.method, item.body, headers, params, null, proxy)
 		displayResponse(item.tabId, res)
 	}
 
