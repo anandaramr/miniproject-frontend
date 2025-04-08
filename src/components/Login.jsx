@@ -26,8 +26,6 @@ export default function Login({ setLogin, setSignup }) {
             setCookie('ref', res.data.refreshToken)
             authorize()
             setLogin(false)
-            console.log(data)
-
         })
         .catch(err => {
             console.log(err)
@@ -42,7 +40,7 @@ export default function Login({ setLogin, setSignup }) {
                 <p className="text-rose-400 text-3xl font-semibold">Login</p>
                 <form id="login" onSubmit={login} className="flex flex-col gap-3 items-center pt-10 justify-between h-full">
                     <div className="flex flex-col gap-4 ">
-                            <input type="text" placeholder="Username" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl" />
+                            <input autoFocus type="text" placeholder="Username" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl" />
                             <input type="password" placeholder="Password" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl"/>
                     </div>
                     <div className="flex gap-5 mt-7">
