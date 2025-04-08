@@ -226,14 +226,14 @@ function Home() {
 
 			{collaborators && <div className="">
 				<div className="flex h-svh w-full justify-center items-center bg-black bg-opacity-60 absolute z-20">
-					<Collaborators setCollaborators={setCollaborators}/>
+					<Collaborators setShowCollaborators={setCollaborators}/>
 				</div>
 			</div>}
 
 			{deleteProject && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 					<div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
-						<div className="border-2 border-zinc-700 w-[24%] bg-zinc-900 h-[24%] rounded-xl flex flex-col items-center py-5 px-5 overflow-y-scroll gap-3"> 
+						<div className="border-2 border-zinc-700 w-[24%] bg-zinc-900 h-[24%] rounded-xl flex flex-col items-center py-5 px-5 gap-3"> 
 							<div className="flex flex-col gap-10 items-center my-6">
 								<p>Are you sure you want to delete the project?</p>
 								<div className="flex gap-5">

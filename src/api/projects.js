@@ -34,7 +34,7 @@ export async function deleteProject(projectId) {
 }
 
 export async function addCollaborator(projectId, username) {
-    axiosJwt.post('/projects/collaborator', { projectId, username })
+    return axiosJwt.post('/projects/collaborator', { projectId, username })
     .then(res => {
         return { message: res.data.message }
     })
@@ -44,7 +44,7 @@ export async function addCollaborator(projectId, username) {
 }
 
 export async function removeCollaborator(projectId, username) {
-    axiosJwt.delete('/projects/collaborator', { projectId, username })
+    return axiosJwt.post('/projects/collaborator/remove', { projectId, username })
     .then(res => {
         return { message: res.data.message }
     })
@@ -54,9 +54,9 @@ export async function removeCollaborator(projectId, username) {
 }
     
 export async function getCollaborators(projectId) {
-    axiosJwt.get(`/projects/collaborator/${projectId}`)
+    return axiosJwt.get(`/projects/collaborator/${projectId}`)
     .then(res => {
-        console.log(res.data)
+        return res.data
     })
     .catch(err => {
         console.log(err.response.data)
@@ -65,7 +65,7 @@ export async function getCollaborators(projectId) {
 }
 
 export async function updateProject(projectId, tabs) {
-    axiosJwt.patch('/projects/state', { projectId, state: JSON.stringify(tabs) })
+    return axiosJwt.patch('/projects/state', { projectId, state: JSON.stringify(tabs) })
     .then(res => {
         return { message: res.data.message }
     })
