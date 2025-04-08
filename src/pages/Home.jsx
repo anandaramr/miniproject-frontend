@@ -191,7 +191,7 @@ function Home() {
 
 			{signup && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
-				<Signup setSignup={setSignup}/>
+				<Signup setLogin={setLogin} setSignup={setSignup}/>
 			</div>}
 
 			<NavBar setLogin={setLogin}/>
