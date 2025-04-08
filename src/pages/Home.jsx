@@ -9,7 +9,7 @@ import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
 import AuthContext from "../context/AuthContext.jsx";
-import { addCollaborator, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
+import { getCollaborators, getMyProjects } from "../api/projects.js";
 
 function Home() {
 
@@ -48,7 +48,6 @@ function Home() {
 			setProjects(projects)
 			console.log(projects)
 
-			// updateProject(projects[0].projectId, JSON.parse(localStorage.getItem("state"))?.tabs)
 			getCollaborators(projects[1].projectId)
 		})
 	}, [user])
@@ -156,8 +155,8 @@ function Home() {
 
 	async function makeRequest(item) {
 		const headers = { ...parseKeyValPairs(item.headers), 'content-type': item.content }
-		const params = parseKeyValPairs(item.headers)
-		const res = await request(item.url,item.method,item.body,headers, params,null,proxy)
+		const params = parseKeyValPairs(item.parameters)
+		const res = await request(item.url, item.method, item.body, headers, params, null, proxy)
 		displayResponse(item.tabId, res)
 	}
 
