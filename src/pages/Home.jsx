@@ -15,7 +15,7 @@ import NewProject from "../components/NewProject.jsx";
 function Home() {
 
 	const [ response, setResponse ] = useState({})
-	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
+	const [ tabs, setTabs ] = useState([])
 	const [ currentTab, setCurrentTab ] = useState()
 	const [ login, setLogin ] = useState(false)
 
@@ -32,15 +32,10 @@ function Home() {
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
-		if(!data || !data.tabs?.length) {
-			setTabs([{ tabId: 1 }])
-			setCurrentTab(1)
-			return;
-		};
 
-		setCurrentTab(data.lastActiveTab)
-		setProxy(data.proxy)
-		setTabs(data.tabs || [{ tabId: 1 }])
+		setCurrentTab(data?.lastActiveTab)
+		setProxy(data?.proxy)
+		setTabs(data?.tabs || [])
 	}, [])
 
 	useEffect(() => {
@@ -84,8 +79,6 @@ function Home() {
 
 	function closeTab(tabId) {
 		updateState(({ tabs: tabList }) => {
-			if (tabList?.length==1) return;
-
 			const newTabs = tabList.filter(tab => tab.tabId!=tabId)
 			let nextCurrentTab = currentTab
 
@@ -94,6 +87,7 @@ function Home() {
 				let result
 				while ((result = iterator.next().value)) {
 					const [ idx ] = result
+					if (!idx) break;
 					if (tabs[idx].tabId==currentTab) {
 						nextCurrentTab = idx < tabs.length-1 ? tabs[idx+1].tabId : tabs[idx-1].tabId
 						break
@@ -226,7 +220,7 @@ function Home() {
 
 			{showNewProjectWindow && <NewProject create={(projectName) => createNewProject(projectName)} cancel={() => setShowNewProjectWindow(false)} /> }
 
-			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} />
+			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setProjects={setProjects} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} />
         
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
@@ -243,10 +237,10 @@ function Home() {
 					</div>
 				</div>
 				
-				<div className="flex">
+				{tabs.length > 0 && <div className="flex">
 					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} updateTabs={updateTabs} />
 					<Response tabId={currentTab} response={response} />
-				</div>
+				</div>}
 			</div>
 		</div>
 	)

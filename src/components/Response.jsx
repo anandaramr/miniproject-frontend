@@ -13,7 +13,6 @@ export default function Response({ response }) {
 
     useEffect(()=>{
         setHeaders(response.headers)
-        console.log(response.time)
     },[response])           
 
     function download() {
