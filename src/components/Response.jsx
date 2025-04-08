@@ -63,26 +63,26 @@ export default function Response({ response }) {
                     <span>{response.statusText}</span>
                     <span className="px-3">{response.time && `${response.time} ms`}</span>
                 </div>
-                <div className="text-sm text-zinc-300 mt-3">
+                <div className="text-sm dark:text-zinc-300 mt-3">
                     <button onClick={()=>setShowResponse("response")}className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(showResponse=="response")&&"underline")}>Response</button>
                     <button onClick={()=>setShowResponse("headers")}className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(showResponse=="headers")&&"underline")}>Headers</button>
                 </div>
                 {showResponse=="response" && <div className="flex flex-col justify-between">
                     <div className="flex items-center gap-3 select-none justify-end">
                         <div className="flex-col">
-                            <span onClick={copy} className="text-gray-500 text-xl hover:text-gray-300 duration-200 cursor-pointer material-symbols-outlined">content_copy</span>
+                            <span onClick={copy} className="dark:text-gray-500 text-xl dark:hover:text-gray-300 duration-200 cursor-pointer material-symbols-outlined">content_copy</span>
                             <div ref={copyMessage} className="text-xs opacity-0 hidden font-medium absolute -translate-x-5 z-10 bg-white bg-opacity-80 cursor-default rounded-md shadow-lg border-[1px] border-zinc-200 text-black px-3 py-1">Copied!</div>
                         </div>
-                        <span onClick={download} className="text-gray-500 hover:text-gray-300 duration-200 cursor-pointer material-symbols-outlined">download</span>
+                        <span onClick={download} className="dark:text-gray-500 dark:hover:text-gray-300 duration-200 cursor-pointer material-symbols-outlined">download</span>
                     </div>
-                    <Editor value={response.data} language={extension} readOnly width="700px" height="475px"/>
+                    <Editor value={response.data} language={extension} readOnly width="700px" height="450px"/>
                 </div>}
                 {showResponse=="headers" && <div className="flex flex-col justify-between">
-                    <p className="mt-5 mb-2 text-xs font-bold border-b-[1.5px] border-zinc-800 py-1 px-2 text-zinc-400">Headers List</p>
+                    <p className="mt-5 mb-2 text-xs font-bold border-b-[1.5px] dark:border-zinc-800 py-1 px-2 dark:text-zinc-400">Headers List</p>
                     {headers && Object.keys(headers).map((item)=>
                     <div className="flex gap-3 text-xs my-2">
-                        <div className="font-semibold text-zinc-400 border-zinc-700 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[40%]">{item}</div>
-                        <div className="border-zinc-700 text-zinc-400 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[80%]">{headers[item]}</div>
+                        <div className="font-semibold dark:text-zinc-400 border-zinc-700 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[40%]">{item}</div>
+                        <div className="border-zinc-700 dark:text-zinc-400 border-opacity-40 border-2 px-2 py-2 bg-transparent w-[80%]">{headers[item]}</div>
                     </div>)}
                 </div>}
 

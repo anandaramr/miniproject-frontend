@@ -116,7 +116,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
     }
 
     const methodButton =<div className="py-1.5 rounded-md px-7 dark:hover:bg-zinc-900 duration-200 dark:border-zinc-600 border-zinc-300 border-[1px] flex flex-col justify-center w-28 dark:bg-lightblack">{method}</div>
-    const contentType =<div className="text-zinc-500 rounded-sm dark:hover:bg-zinc-900 duration-200 flex gap-2 items-center justify-center dark:bg-lightblack w-32">{content}<span className="material-symbols-outlined">arrow_drop_down</span></div>
+    const contentType =<div className="dark:text-zinc-500 rounded-sm dark:hover:bg-zinc-900 duration-200 flex gap-2 items-center justify-center dark:bg-lightblack w-32">{content}<span className="material-symbols-outlined">arrow_drop_down</span></div>
     
 
     return (
@@ -128,7 +128,7 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
                 <input onChange={(evt) => setUrl(evt.target.value)} value={url} onKeyDown={handleKeyBinding} type="text" className="rounded-md text-sm py-1.5 w-[500px] dark:border-zinc-700 outline-none px-3 border-zinc-300 border-[1px] dark:bg-lightblack"/>
                 <button onClick={handleButtonClick} disabled={!url?.trim()} className="font-medium rounded-lg py-1.5 dark:border-zinc-700 w-28 text-white border-zinc-300 border-[1px] bg-rose-400 hover:bg-rose-500 duration-200 disabled:opacity-50">{isLoading ? "Cancel" : "Send"}</button>
             </div>
-            <div className="flex text-sm text-zinc-300 justify-between">
+            <div className="flex text-sm dark:text-zinc-300 justify-between">
                 <div>
                     <button onClick={()=> setActive("Parameters")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Parameters")&&"underline")}>Parameters</button>
                     <button onClick={()=> setActive("Body")} className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(active=="Body")&&"underline")}>Body</button>
