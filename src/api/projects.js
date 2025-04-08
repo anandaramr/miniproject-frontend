@@ -73,3 +73,13 @@ export async function updateProject(projectId, tabs) {
         return { error: err.response.data }
     })
 }
+
+export async function renameProject(projectId, projectName) {
+    return axiosJwt.patch('/projects/rename', { projectId, projectName })
+    .then(res => {
+        return { message: res.data.message }
+    })
+    .catch(err => {
+        return { error: err.response.data }
+    })
+}
