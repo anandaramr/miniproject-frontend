@@ -2,7 +2,7 @@ import Method from "../components/Method";
 import { request } from "../utils/request";
 import Popup from "../components/Popup"
 import { useEffect, useState } from "react"
-import { parseJson, updateState } from "../utils/utils";
+import { parseJson, parseKeyValPairs, updateState } from "../utils/utils";
 import { cls } from "../utils/cls";
 import KeyValue from './KeyValue'
 import Body from "./Body";
@@ -18,22 +18,23 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
     const [ parameters, setParameters ] = useState([])
     const [ isLoading, setIsLoading ] = useState(false)
     const [ controller, setController ] = useState()
-    const [ content, setContent ] = useState("application/json")
+    const [ content, setContent ] = useState()
 
     useEffect(() => {
-        const { method, url, body, headers, parameters } = getTabState()
+        const { method, url, body, content, headers, parameters } = getTabState()
         
         setMethod(method || "GET")
         setUrl(url || "")
         setBody(body || "")
         setHeaders(headers || [])
         setParameters(parameters || [])
+        setContent(content || "application/json")
     }, [tabId])
 
     
     useEffect(() => {
         saveTabState()
-    }, [method, url, body, headers, parameters])
+    }, [method, url, body, content, headers, parameters])
     
     async function sendRequest() {
         let input = url.trim()
@@ -58,16 +59,6 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
         displayResponse(savedTabId, response)
     }
 
-    function parseKeyValPairs(input) {
-        const result = {}
-        input.forEach(item => {
-            if (!item[0]) return;
-            if (!item[1]) item[1] = ""
-            result[item[0]] = item[1]
-        })
-        return result
-    }
-
     function saveTabState() {
         if (!tabId) return;
         
@@ -76,12 +67,12 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
             tabs = tabs.map(item => {
                 if (item.tabId === tabId) {
                     found = true
-                    item = { ...item, method, url, body, headers, parameters }
+                    item = { ...item, method, url, body, content, headers, parameters }
                 }
                 return item
             })
             
-            if(!found) tabs.push({ tabId, method, url, body });
+            if(!found) tabs.push({ tabId, method, url, body, content, headers, parameters });
             return { tabs }
         })
 
