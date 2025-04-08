@@ -18,16 +18,16 @@ function Home() {
 	const [ response, setResponse ] = useState({})
 	const [ tabs, setTabs ] = useState([])
 	const [ currentTab, setCurrentTab ] = useState()
-	const [login, setLogin] = useState(false)
-	const [deleteProject, setDeleteProject] = useState(false);
+	const [ login, setLogin ] = useState(false)
+	const [ deleteProject, setDeleteProject ] = useState(false);
 
-	const [signup, setSignup] = useState(false)
+	const [ signup, setSignup ] = useState(false)
 	const [ dialog, setDialog ] = useState(false)
 	const [ proxy, setProxy ] = useState()
 	const [ dragIdx, setDragIdx ] = useState()
-	const [collaborators, setCollaborators] = useState(false)
-    const [renameProject, setRenameProject] = useState(false)
 
+	const [ collaborators, setCollaborators ] = useState(false)
+    const [ renameProject, setRenameProject ] = useState(false)
 	const [ projects, setProjects ] = useState([])
 	const [ showNewProjectWindow, setShowNewProjectWindow ] = useState(false)
 	
@@ -40,7 +40,7 @@ function Home() {
 		setCurrentTab(data?.lastActiveTab)
 		setProxy(data?.proxy)
 		setTabs(data?.tabs || [])
-	}, [])
+	}, [projects])
 
 	useEffect(() => {
 		if (!user) return;
@@ -67,16 +67,14 @@ function Home() {
 	function newTab() {
 		updateState(({ tabs }) => {
 			const newTabId = generateId()
+			const welcomeUrl = `${import.meta.env.VITE_SERVER}/echo`
+
+			tabs = tabs || []
+			tabs = [ ...tabs, { tabId: newTabId, url: welcomeUrl }]
+			const lastActiveTab = newTabId
 
 			setCurrentTab(newTabId)
-			setTabs(t => [ ...t, { tabId: newTabId }])
-			const lastActiveTab = newTabId
-			
-			tabs = tabs || []
-
-			const welcomeUrl = `${import.meta.env.VITE_SERVER}/echo`
-			tabs = [ ...tabs, { tabId: newTabId, url: welcomeUrl }]
-			
+			setTabs(t => [ ...t, { tabId: newTabId, url: welcomeUrl }])
 			return { lastActiveTab, tabs }
 		})
 	}
@@ -86,12 +84,11 @@ function Home() {
 			const newTabs = tabList.filter(tab => tab.tabId!=tabId)
 			let nextCurrentTab = currentTab
 
-			if (tabId==currentTab) {
+			if (tabId==currentTab && tabs.length > 1) {
 				const iterator = tabs.entries()
 				let result
 				while ((result = iterator.next().value)) {
 					const [ idx ] = result
-					if (!idx) break;
 					if (tabs[idx].tabId==currentTab) {
 						nextCurrentTab = idx < tabs.length-1 ? tabs[idx+1].tabId : tabs[idx-1].tabId
 						break
@@ -281,6 +278,11 @@ function Home() {
 					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} updateTabs={updateTabs} />
 					<Response tabId={currentTab} response={response} />
 				</div>}
+
+				{tabs.length==0 && <div className="flex flex-col justify-center items-center h-[50svh]">
+					<div className="text-7xl text-zinc-500 font-cabin">Start Your Project</div>
+					<button onClick={newTab} className="text-3xl font-mono border-2 border-zinc-400 hover:bg-zinc-400 hover:text-zinc-800 duration-200 rounded-xl px-8 py-3 m-5 text-zinc-400">Start!</button>
+				</div> }
 			</div>
 		</div>
 	)

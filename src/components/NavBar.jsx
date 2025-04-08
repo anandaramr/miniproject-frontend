@@ -4,7 +4,7 @@ import ThemeSelector from "./ThemeSelector"
 import Popup from "./Popup"
 import AuthContext from "../context/AuthContext"
 import Projects from "./Projects"
-import { convertToOpenAPI, getLastActiveProject } from "../utils/utils"
+import { convertToOpenAPI, getLastActiveProject, setLastActiveProject } from "../utils/utils"
 
 export default function NavBar({ setLogin, projects, setTabs, setProjects, setCurrentTab, saveProject, newProject, setCollaborators, setRenameProject, setDeleteProject }) {
 
@@ -14,7 +14,14 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
     const [ projectName, setProjectName ] = useState()
 
     useEffect(() => {
-        const currentProjectId = getLastActiveProject()
+        if (!projects[0]) return;
+        
+        let currentProjectId = getLastActiveProject()
+        if (!currentProjectId) {
+            currentProjectId = projects[0]?.projectId
+            setLastActiveProject(currentProjectId)
+        }
+
         const currentProject = projects.find(item => item.projectId == currentProjectId) || projects[0]
         setProjectName(currentProject?.projectName || "Untitled")
 
