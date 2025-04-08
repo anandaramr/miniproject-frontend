@@ -8,7 +8,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        "inter": [ 'Inter', 'sans-serif' ]
+        "inter": [ 'Inter', 'sans-serif' ],
+        "cabin": [ 'Cabin Sketch', 'sans-serif' ]
       },
       colors: {
         'lightblack': '#131517'

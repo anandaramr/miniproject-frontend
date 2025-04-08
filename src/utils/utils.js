@@ -108,7 +108,8 @@ export function convertToOpenAPI(requests) {
     const paths = {};
   
     requests.forEach((req) => {
-        if (!req.url || !req.method) return;
+        if (!req.url) return;
+        if (!req.method) req.method = "GET"
 
         const url = new URL(req.url);
         const path = url.pathname || "/";
@@ -137,7 +138,7 @@ export function convertToOpenAPI(requests) {
             version: "1.0.0"
         },
         paths: paths
-    });
+    }, null, 4);
 }
   
 function inferSchemaFromResponse(data) {

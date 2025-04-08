@@ -10,18 +10,22 @@ import ContentType from "./ContentType";
 
 export default function Request({ tabId, displayResponse, setProxy, proxy, updateTabs }) {
 
-    const [ active, setActive] = useState("Body")
-    const [ method, setMethod] = useState("GET")
+    const [ active, setActive ] = useState("Body")
+    const [ method, setMethod ] = useState("GET")
     const [ url, setUrl ] = useState("")
     const [ body, setBody ] = useState()
+
     const [ headers, setHeaders ] = useState([])
     const [ parameters, setParameters ] = useState([])
     const [ isLoading, setIsLoading ] = useState(false)
     const [ controller, setController ] = useState()
+
     const [ content, setContent ] = useState()
+    const [ isLoadingPage, setIsLoadingPage ] = useState(true)
 
     useEffect(() => {
         const { method, url, body, content, headers, parameters } = getTabState()
+        setIsLoadingPage(false)
         
         setMethod(method || "GET")
         setUrl(url || "")
@@ -33,6 +37,8 @@ export default function Request({ tabId, displayResponse, setProxy, proxy, updat
 
     
     useEffect(() => {
+        if (isLoadingPage) return;
+
         saveTabState()
     }, [method, url, body, content, headers, parameters])
     
