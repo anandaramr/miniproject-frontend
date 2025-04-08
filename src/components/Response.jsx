@@ -4,13 +4,16 @@ import { cls } from "../utils/cls";
 
 export default function Response({ response }) {
 
-    const copyMessage = useRef()
     const [ extension, setExtension ] = useState("txt")
     const [ showResponse, setShowResponse ] = useState("response")
     const [headers, setHeaders] = useState();
+    const [ time, setTime ] = useState()
+    
+    const copyMessage = useRef()
 
     useEffect(()=>{
         setHeaders(response.headers)
+        console.log(response.time)
     },[response])           
 
     function download() {
@@ -55,10 +58,11 @@ export default function Response({ response }) {
         <div className="pl-10 pt-3 w-full">
             {!response.error && 
             <div className="flex flex-col gap-1">
-                <div className={cls("flex gap-3 text-xs font-semibold select-none", response?.ok && "text-emerald-400")}>
+                <div className={cls("flex gap-2 text-xs font-semibold select-none", response?.ok ? "text-emerald-400" : "text-rose-400")}>
                     <span>{response.statusCode && "Status"}</span>
                     <span>{response.statusCode}</span>
                     <span>{response.statusText}</span>
+                    <span className="px-3">{response.time && `${response.time} ms`}</span>
                 </div>
                 <div className="text-sm text-zinc-300 mt-3">
                     <button onClick={()=>setShowResponse("response")}className={cls("mx-4 dark:hover:underline underline-offset-8 decoration-2 decoration-rose-300",(showResponse=="response")&&"underline")}>Response</button>
