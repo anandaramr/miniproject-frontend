@@ -2,21 +2,22 @@ import NavBar from "../components/NavBar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, parseJson, parseKeyValPairs, updateState } from "../utils/utils";
+import { generateId, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Run from '../components/Run'
 import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
 import AuthContext from "../context/AuthContext.jsx";
-import { getCollaborators, getMyProjects } from "../api/projects.js";
+import { createProject, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
+import NewProject from "../components/NewProject.jsx";
 
 function Home() {
 
 	const [ response, setResponse ] = useState({})
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
-	const [login, setLogin] = useState(false)
+	const [ login, setLogin ] = useState(false)
 
 	const [signup, setSignup] = useState(false)
 	const [ dialog, setDialog ] = useState(false)
@@ -24,6 +25,7 @@ function Home() {
 	const [ dragIdx, setDragIdx ] = useState()
 
 	const [ projects, setProjects ] = useState([])
+	const [ showNewProjectWindow, setShowNewProjectWindow ] = useState(false)
 	
 	const tabRef = useRef()
 	const { user } = useContext(AuthContext)
@@ -46,9 +48,6 @@ function Home() {
 
 		getMyProjects().then(projects => {
 			setProjects(projects)
-			console.log(projects)
-
-			getCollaborators(projects[1].projectId)
 		})
 	}, [user])
 
@@ -175,6 +174,38 @@ function Home() {
 		})
 	}
 
+	function saveProject() {
+		const currentProjectId = getLastActiveProject()
+		const tabs = JSON.parse(localStorage.getItem("state"))?.tabs
+		updateProject(currentProjectId, tabs)
+		.then(() => {
+			setProjects(projects => projects.map(project => {
+				if (project.projectId == currentProjectId) {
+					project.state = JSON.stringify(tabs)
+				}
+
+				return project
+			}))
+		})
+	}
+
+	function newProject() {
+		setShowNewProjectWindow(true)
+	}
+
+	function createNewProject(projectName) {
+		createProject(projectName).then(res => {
+			setProjects(projects => {
+				const newProjects = [ ...projects, res ]
+				return newProjects
+			})
+
+			setLastActiveProject(res.projectId)
+			console.log(res)
+			setShowNewProjectWindow(false)
+		})
+	}
+
 	return (
 		<div className="">
 
@@ -193,11 +224,13 @@ function Home() {
 				<Signup setLogin={setLogin} setSignup={setSignup}/>
 			</div>}
 
-			<NavBar setLogin={setLogin}/>
+			{showNewProjectWindow && <NewProject create={(projectName) => createNewProject(projectName)} cancel={() => setShowNewProjectWindow(false)} /> }
+
+			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} />
         
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
-				<p className="text-emerald-50">Run</p>
+				<p className="dark:text-emerald-50 text-gray-900">Run</p>
 			</button>
 
 			<div className="px-8">

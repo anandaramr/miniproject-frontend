@@ -96,6 +96,14 @@ export function parseKeyValPairs(input) {
     return result
 }
 
+export function setLastActiveProject(projectId) {
+    localStorage.setItem("lastActiveProject", projectId)
+}
+
+export function getLastActiveProject() {
+    return localStorage.getItem("lastActiveProject")
+}
+
 export function convertToOpenAPI(requests) {
     const paths = {};
   
