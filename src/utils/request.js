@@ -66,8 +66,12 @@ export async function request(url, method, body, headers, params, controller, pr
         request = new Request(url, { method, body, headers: reqHeaders, signal: controller?.signal })
     }
     
+    const start = new Date().getTime()
     const response = await fetch(request).catch(error =>  ({ ok: false, error }) )
-    if (response.error) return response;
+    const end = new Date().getTime()
+    const time = end - start
+
+    if (response.error) return { ...response, time };
 
     unwrapHeaders(response)
     const { status: statusCode, statusText, ok, headers: resHeaders } = response;
@@ -80,7 +84,8 @@ export async function request(url, method, body, headers, params, controller, pr
     } else {
         data = await response.text()
     }
-    return { data, statusCode, statusText, ok, headers: resHeaders }
+
+    return { data, statusCode, statusText, ok, headers: resHeaders, time }
 }
 
 /**

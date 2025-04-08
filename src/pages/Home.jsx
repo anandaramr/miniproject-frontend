@@ -2,20 +2,21 @@ import NavBar from "../components/NavBar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, parseJson, parseKeyValPairs, updateState } from "../utils/utils";
+import { generateId, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Run from '../components/Run'
 import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
 import AuthContext from "../context/AuthContext.jsx";
-import { addCollaborator, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
+import { createProject, addCollaborator, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
+import NewProject from "../components/NewProject.jsx";
 import Collaborators from "../components/Collaborators.jsx";
 
 function Home() {
 
 	const [ response, setResponse ] = useState({})
-	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
+	const [ tabs, setTabs ] = useState([])
 	const [ currentTab, setCurrentTab ] = useState()
 	const [login, setLogin] = useState(false)
 	const [deleteProject, setDeleteProject] = useState(false);
@@ -28,21 +29,17 @@ function Home() {
     const [renameProject, setRenameProject] = useState(false)
 
 	const [ projects, setProjects ] = useState([])
+	const [ showNewProjectWindow, setShowNewProjectWindow ] = useState(false)
 	
 	const tabRef = useRef()
 	const { user } = useContext(AuthContext)
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
-		if(!data || !data.tabs?.length) {
-			setTabs([{ tabId: 1 }])
-			setCurrentTab(1)
-			return;
-		};
 
-		setCurrentTab(data.lastActiveTab)
-		setProxy(data.proxy)
-		setTabs(data.tabs || [{ tabId: 1 }])
+		setCurrentTab(data?.lastActiveTab)
+		setProxy(data?.proxy)
+		setTabs(data?.tabs || [])
 	}, [])
 
 	useEffect(() => {
@@ -50,9 +47,6 @@ function Home() {
 
 		getMyProjects().then(projects => {
 			setProjects(projects)
-			console.log(projects)
-
-			getCollaborators(projects[1].projectId)
 		})
 	}, [user])
 
@@ -89,8 +83,6 @@ function Home() {
 
 	function closeTab(tabId) {
 		updateState(({ tabs: tabList }) => {
-			if (tabList?.length==1) return;
-
 			const newTabs = tabList.filter(tab => tab.tabId!=tabId)
 			let nextCurrentTab = currentTab
 
@@ -99,6 +91,7 @@ function Home() {
 				let result
 				while ((result = iterator.next().value)) {
 					const [ idx ] = result
+					if (!idx) break;
 					if (tabs[idx].tabId==currentTab) {
 						nextCurrentTab = idx < tabs.length-1 ? tabs[idx+1].tabId : tabs[idx-1].tabId
 						break
@@ -179,6 +172,38 @@ function Home() {
 		})
 	}
 
+	function saveProject() {
+		const currentProjectId = getLastActiveProject()
+		const tabs = JSON.parse(localStorage.getItem("state"))?.tabs
+		updateProject(currentProjectId, tabs)
+		.then(() => {
+			setProjects(projects => projects.map(project => {
+				if (project.projectId == currentProjectId) {
+					project.state = JSON.stringify(tabs)
+				}
+
+				return project
+			}))
+		})
+	}
+
+	function newProject() {
+		setShowNewProjectWindow(true)
+	}
+
+	function createNewProject(projectName) {
+		createProject(projectName).then(res => {
+			setProjects(projects => {
+				const newProjects = [ ...projects, res ]
+				return newProjects
+			})
+
+			setLastActiveProject(res.projectId)
+			console.log(res)
+			setShowNewProjectWindow(false)
+		})
+	}
+
 	return (
 		<div className="">
 
@@ -197,7 +222,11 @@ function Home() {
 				<Signup setLogin={setLogin} setSignup={setSignup}/>
 			</div>}
 
-			{collaborators && <div>
+			{showNewProjectWindow && <NewProject create={(projectName) => createNewProject(projectName)} cancel={() => setShowNewProjectWindow(false)} /> }
+
+			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setProjects={setProjects} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} setCollaborators={setCollaborators} setRenameProject={setRenameProject} setDeleteProject={setDeleteProject} />
+
+        {collaborators && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 				<Collaborators setCollaborators={setCollaborators}/>
 			</div>}
@@ -231,12 +260,10 @@ function Home() {
 						</div>
 					</div>
 			</div>}
-
-			<NavBar setLogin={setLogin} setCollaborators={setCollaborators} setRenameProject={setRenameProject} setDeleteProject={setDeleteProject}/>
         
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
-				<p className="text-emerald-50">Run</p>
+				<p className="dark:text-emerald-50 text-gray-900">Run</p>
 			</button>
 
 			<div className="px-8">
@@ -249,10 +276,10 @@ function Home() {
 					</div>
 				</div>
 				
-				<div className="flex">
+				{tabs.length > 0 && <div className="flex">
 					<Request tabId={currentTab} displayResponse={displayResponse} setProxy={setProxy} proxy={proxy} updateTabs={updateTabs} />
 					<Response tabId={currentTab} response={response} />
-				</div>
+				</div>}
 			</div>
 		</div>
 	)
