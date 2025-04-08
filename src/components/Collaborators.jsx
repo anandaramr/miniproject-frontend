@@ -1,12 +1,48 @@
-export default function Collaborators({ setCollaborators }) {
+import { useContext, useEffect, useState } from "react";
+import { addCollaborator, getCollaborators, removeCollaborator } from "../api/projects";
+import AuthContext from "../context/AuthContext";
 
-    const collaborators = [{"username":"ananthu"},{"username":"kulli"},{"username":"unni"}]
+export default function Collaborators({ setShowCollaborators }) {
+
+    const [collaborators, setCollaborators] = useState([])
+	const { user } = useContext(AuthContext)
+
+    useEffect(()=>{
+        getCollabs();
+    },[])
 
     function newCollaborator(evt)
-   {
-        evt.preventDefault();
-        const user = document.querySelector("#username").value;
-   }
+    {
+            evt.preventDefault();
+            const username = document.querySelector("#username").value;
+            const projectId = JSON.parse(localStorage.getItem("lastActiveProject"))
+            console.log(projectId,username)
+            addCollaborator(projectId, username)
+            .then(res=>{
+                setCollaborators((l)=> [...l,{username}])
+            })
+            .catch(err => console.log(err))
+    }
+
+    function deleteCollaborator(username)
+    {
+        const projectId = JSON.parse(localStorage.getItem("lastActiveProject"))
+        removeCollaborator(projectId,username)
+        .then(res=>{
+            setCollaborators((l)=> l.filter((item)=>(item.username!=username)))
+        })
+        .catch(err => console.log(err))
+    }
+
+    function getCollabs()
+    {
+        const projectId = JSON.parse(localStorage.getItem("lastActiveProject"))
+        getCollaborators(projectId)
+        .then(res=>{
+            setCollaborators(res)
+        })
+        .catch(err => console.log(err))
+    }
 
     return (
         <div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
@@ -14,7 +50,7 @@ export default function Collaborators({ setCollaborators }) {
                 <div className="flex justify-between w-full items-center mb-10">
                     <div></div>
                     <p className="text-xl justify-center flex">Collaborators</p>
-                    <button onClick={()=>setCollaborators(false)} className="hover:text-rose-400 duration-150"><span className="material-symbols-outlined text-2xl px-2">close</span></button>
+                    <button onClick={()=>setShowCollaborators(false)} className="hover:text-rose-400 duration-150"><span className="material-symbols-outlined text-2xl px-2">close</span></button>
                 </div>
                 <div className="flex flex-col overflow-y-scroll items-center gap-5 ">
                     <form onSubmit={newCollaborator} className="flex gap-7 items-center text-zinc-400">
@@ -23,10 +59,11 @@ export default function Collaborators({ setCollaborators }) {
                     </form>
                 </div>
                 <div className="flex flex-col gap-3 py-7 px-6 mt-6">
-                    {collaborators.map(item =>
-                    <div className="flex justify-between px-4">
-                        <p className="text-xl">{item.username}</p>
-                        <span className="material-symbols-outlined text-zinc-600 flex items-center text-xl cursor-default hover:text-red-400 duration-200">person_remove</span>
+                    {collaborators.map((item,index) =>
+                    <div key={index} className="flex justify-between px-4">
+                        <p id="removeUsername" className="text-xl">{item.username}</p>
+                        {item.username!=user.username && !item.is_owner && <button onClick={()=>deleteCollaborator(item.username)}><span className="material-symbols-outlined text-zinc-600 flex items-center text-xl cursor-default hover:text-red-400 duration-200">person_remove</span></button>}
+                        {item.is_owner && <p className="text-zinc-500 text-sm">Owner</p>}
                     </div>
                     )} 
                 </div>
