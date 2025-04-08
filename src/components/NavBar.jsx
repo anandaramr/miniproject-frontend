@@ -4,12 +4,12 @@ import ThemeSelector from "./ThemeSelector"
 import Popup from "./Popup"
 import AuthContext from "../context/AuthContext"
 import Projects from "./Projects"
-import { getLastActiveProject } from "../utils/utils"
+import { convertToOpenAPI, getLastActiveProject } from "../utils/utils"
 
 export default function NavBar({ setLogin, projects, setTabs, setProjects, setCurrentTab, saveProject, newProject, setCollaborators, setRenameProject, setDeleteProject }) {
 
     const { theme } = useContext(ThemeContext)
-	  const { user, logout, isLoading } = useContext(AuthContext)
+    const { user, logout, isLoading } = useContext(AuthContext)
     const [ showProfile ,setShowProfile ] = useState(false)
     const [ projectName, setProjectName ] = useState()
 
@@ -41,14 +41,29 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
         logout()
     }
 
+    function exportProject() {
+        const type = 'application/json'
+        const tabs = JSON.parse(localStorage.getItem("state")).tabs
+        const downloadData = new Blob([convertToOpenAPI(tabs)], { type });
+        const url = URL.createObjectURL(downloadData);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${projectName}.json`;
+
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
     return(
         <div className="h-[7svh] flex justify-between py-9 gap-6 items-center px-2 dark:text-zinc-400">
-            {user && <div className="flex gap-3 items-center">
+            {user && <div className="flex gap-5 items-center">
                 <Popup collapsible title={<div className="flex items-center justify-center gap-1 px-3"><div className="dark:text-zinc-400 duration-150 hover:text-zinc-200 text-zinc-700 text-xl">{projectName}</div><span className="material-symbols-outlined">keyboard_arrow_down</span></div>}>
                     <Projects projects={projects} setProjectName={setProjectName} setTabs={setTabs} setCurrentTab={setCurrentTab} newProject={newProject} />
                 </Popup>
 
-                <button onClick={saveProject} className="hover:text-zinc-200 text-zinc-400 px-3"><span className="material-symbols-outlined text-2xl">save</span></button>
+                <button onClick={saveProject} className="hover:text-zinc-200 text-zinc-400"><span className="material-symbols-outlined text-2xl">save</span></button>
 
                 <Popup collapsible title={<span className="material-symbols-outlined text-zinc-400 flex text-2xl hover:text-zinc-200">settings</span>}>
                     <div className="text-zinc-400 mt-2 px-3 flex flex-col gap-4 items-center w-40 dark:border-zinc-700 border-zinc-300 shadow-md border-[1px] rounded-lg py-5 dark:bg-lightblack bg-slate-200 z-50 absolute text-base">
@@ -57,6 +72,8 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
                         <button onClick={()=>setDeleteProject(true)} className="hover:text-white duration-150">Delete Project</button>
                     </div>
                 </Popup>
+
+                <button onClick={exportProject}><span className="material-symbols-outlined text-2xl">file_export</span></button>
             </div>}
 
             {!user && <div></div> }
