@@ -4,7 +4,7 @@ import ThemeSelector from "./ThemeSelector"
 import Popup from "./Popup"
 import AuthContext from "../context/AuthContext"
 import Projects from "./Projects"
-import { convertToOpenAPI, getLastActiveProject, setLastActiveProject } from "../utils/utils"
+import { convertToOpenAPI, getCurrentProject } from "../utils/utils"
 
 export default function NavBar({ setLogin, projects, setTabs, setProjects, setCurrentTab, saveProject, newProject, setCollaborators, setRenameProject, setDeleteProject }) {
 
@@ -14,22 +14,9 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
     const [ projectName, setProjectName ] = useState()
 
     useEffect(() => {
-        if (!projects[0]) return;
-        
-        let currentProjectId = getLastActiveProject()
-        if (!currentProjectId) {
-            currentProjectId = projects[0]?.projectId
-            setLastActiveProject(currentProjectId)
-        }
-
-        const currentProject = projects.find(item => item.projectId == currentProjectId) || projects[0]
+        const currentProject = getCurrentProject(projects)
+        if (!currentProject) return;
         setProjectName(currentProject?.projectName || "Untitled")
-
-        try {
-            setTabs(JSON.parse(currentProject?.state) || [])
-        } catch {
-            setTabs([])
-        }
     }, [projects])
     
     useEffect(() => {
@@ -63,29 +50,30 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
         document.body.removeChild(link);
     }
 
-    return(
+   return (
         <div className="h-[7svh] flex justify-between py-9 gap-6 items-center px-2 dark:text-zinc-400">
             {user && <div className="flex gap-5 items-center">
                 <Popup collapsible title={<div className="flex items-center justify-center gap-1 px-3"><div className="dark:text-zinc-400 duration-150 hover:text-zinc-200 text-zinc-700 text-xl">{projectName}</div><span className="material-symbols-outlined">keyboard_arrow_down</span></div>}>
                     <Projects projects={projects} setProjectName={setProjectName} setTabs={setTabs} setCurrentTab={setCurrentTab} newProject={newProject} />
                 </Popup>
 
-                <button onClick={saveProject} className="hover:text-zinc-200 text-zinc-400"><span className="material-symbols-outlined text-2xl">save</span></button>
+                <button onClick={saveProject} className="dark:hover:text-zinc-200 dark:text-zinc-400"><span className="material-symbols-outlined text-2xl">save</span></button>
+                <span onClick={() => setCollaborators(true)} className="material-symbols-outlined dark:text-zinc-400 flex text-2xl dark:hover:text-zinc-200 cursor-pointer">settings</span>
 
-                <Popup collapsible title={<span className="material-symbols-outlined text-zinc-400 flex text-2xl hover:text-zinc-200">settings</span>}>
-                    <div className="text-zinc-400 mt-2 px-3 flex flex-col gap-4 items-center w-40 dark:border-zinc-700 border-zinc-300 shadow-md border-[1px] rounded-lg py-5 dark:bg-lightblack bg-slate-200 z-50 absolute text-base">
-                        <button onClick={()=>setCollaborators(true)} className="hover:text-white duration-150">Collaborators</button>
-                        <button onClick={()=>setRenameProject(true)} className="hover:text-white duration-150">Rename Project</button>
-                        <button onClick={()=>setDeleteProject(true)} className="hover:text-white duration-150">Delete Project</button>
+                {/* <Popup collapsible title={<span className="material-symbols-outlined dark:text-zinc-400 flex text-2xl dark:hover:text-zinc-200">settings</span>}>
+                    <div className="dark:text-zinc-400 mt-2 px-3 flex flex-col gap-4 items-center w-40 dark:border-zinc-700 border-zinc-300 shadow-md border-[1px] rounded-lg py-5 dark:bg-lightblack bg-white z-50 absolute text-base">
+                        <button onClick={()=>setCollaborators(true)} className="dark:hover:text-white duration-150">Collaborators</button>
+                        <button onClick={()=>setRenameProject(true)} className="dark:hover:text-white duration-150">Rename Project</button>
                     </div>
-                </Popup>
+                </Popup> */}
 
-                <button onClick={exportProject}><span className="material-symbols-outlined text-2xl">file_export</span></button>
+                <button onClick={exportProject}><span className="material-symbols-outlined text-2xl dark:hover:text-zinc-200 dark:text-zinc-400">file_export</span></button>
             </div>}
 
             {!user && <div></div> }
 
-            <div className="flex gap-6 items-center">
+            <div className="flex gap-6 items-center select-none">
+                {user && <div className="text-lg">Hello, {user.username}</div>}
                 {!isLoading && !user && <button onClick={()=>setLogin(true)} className="font-semibold px-3 py-4 flex items-center text-lg hover:text-zinc-400 duration-150">Login</button>}
                 {!isLoading && user && <div className="flex flex-col items-center">
                     <div onClick={()=>setShowProfile(!showProfile)} className="dark:hover:text-white hover: dark:hover:border-white duration-150 rounded-full border-2 dark:border-zinc-400 border-gray-800 text-xl h-9 w-9 flex items-center justify-center cursor-pointer">{user?.username[0].toUpperCase()}</div>

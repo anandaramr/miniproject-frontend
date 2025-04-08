@@ -26,8 +26,11 @@ export default function Signup({setSignup, setLogin})
         axios.post('/auth/register', data)
         .then(res => {
             if(res.data.error) return setError(res.data.error);
+
             setCookie('auth', res.data.accessToken)
             setCookie('ref', res.data.refreshToken)
+            localStorage.removeItem("state")
+
             authorize()
             setSignup(false)
         })
@@ -45,7 +48,7 @@ export default function Signup({setSignup, setLogin})
                     <p className="text-rose-400 text-3xl font-semibold">Signup</p>
                     <form id="signup" onSubmit={signup} className="flex flex-col gap-3 items-center pt-10 justify-between h-full">
                         <div className="flex flex-col gap-4 ">
-                                <input type="text" placeholder="Username" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl" />
+                                <input autoFocus type="text" placeholder="Username" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl" />
                                 <input type="password" placeholder="Password" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl"/>
                                 <input type="password" placeholder="Confirm Password" className="bg-zinc-800 px-4 py-2 w-72 outline-none rounded-xl"/>
                         </div>

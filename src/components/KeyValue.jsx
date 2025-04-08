@@ -21,7 +21,7 @@ export default function KeyValue({ item, setEntries, entries}) {
     return(
         <div>
             <div className="flex justify-between my-5 px-3 text-xs items-center border-b-[1px] border-zinc-700 border-opacity-20">
-                <p className=" text-slate-200 opacity-70 font-semibold">{ item=='Headers' ? "Headers List" : "Query Parameters" }</p>
+                <p className="dark:text-slate-200 opacity-70 font-semibold">{ item=='Headers' ? "Headers List" : "Query Parameters" }</p>
                 <button onClick={addRow} className="hover:text-emerald-300"><span className="material-symbols-outlined text-lg">add</span></button>
             </div>
             <div>

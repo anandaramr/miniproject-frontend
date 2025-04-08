@@ -104,6 +104,23 @@ export function getLastActiveProject() {
     return localStorage.getItem("lastActiveProject")
 }
 
+export function getCurrentProject(projects) {
+    if (!projects[0]) return null;
+        
+    let currentProjectId = getLastActiveProject()
+    if (!currentProjectId) {
+        currentProjectId = projects[0].projectId
+        setLastActiveProject(currentProjectId)
+    }
+
+    const project = projects.find(item => item.projectId == currentProjectId) || projects[0]
+    updateState(({ lastActiveTab }) => {
+        const tabs = JSON.parse(project.state)
+        return { tabs, lastActiveTab: lastActiveTab || tabs[0].tabId }
+    })
+    return project
+}
+
 export function convertToOpenAPI(requests) {
     const paths = {};
   

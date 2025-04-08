@@ -2,7 +2,7 @@ import NavBar from "../components/NavBar";
 import { useContext, useEffect, useRef, useState } from "react";
 import Request from "../components/Request";
 import Response from "../components/Response";
-import { generateId, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
+import { generateId, getCurrentProject, getLastActiveProject, parseJson, parseKeyValPairs, setLastActiveProject, updateState } from "../utils/utils";
 import Tab from "../components/Tab";
 import Run from '../components/Run'
 import { request } from "../utils/request.js";
@@ -36,18 +36,29 @@ function Home() {
 
 	useEffect(() => {
 		const { data } = parseJson(localStorage.getItem("state"))
-
+		
 		setCurrentTab(data?.lastActiveTab)
 		setProxy(data?.proxy)
-		setTabs(data?.tabs || [])
+		
+        const currentProject = getCurrentProject(projects)
+		if (!currentProject) {
+			setTabs(data?.tabs || [])
+			return;
+		}
+		
+        try {
+			const tabs = JSON.parse(currentProject?.state || "[]")
+			setTabs(tabs)
+        } catch { 
+			setTabs([]) 
+			return;
+		}
 	}, [projects])
 
 	useEffect(() => {
 		if (!user) return;
 
-		getMyProjects().then(projects => {
-			setProjects(projects)
-		})
+		refreshProjects()
 	}, [user])
 
 	useEffect(() => {
@@ -63,6 +74,11 @@ function Home() {
 			return { proxy }
 		})
 	}, [proxy])
+
+	async function refreshProjects() {
+		const projects = await getMyProjects()
+		setProjects(projects)
+	}
 
 	function newTab() {
 		updateState(({ tabs }) => {
@@ -227,32 +243,17 @@ function Home() {
 				</div>
 			</div>}
 
-			{deleteProject && <div>
-				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
-					<div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
-						<div className="border-2 border-zinc-700 w-[24%] bg-zinc-900 h-[24%] rounded-xl flex flex-col items-center py-5 px-5 gap-3"> 
-							<div className="flex flex-col gap-10 items-center my-6">
-								<p>Are you sure you want to delete the project?</p>
-								<div className="flex gap-5">
-									<button type="submit" className="duration-100 px-4 border-2 border-rose-500 py-2 rounded-xl bg-rose-500 hover:text-white  hover:border-rose-600 hover:bg-rose-600">Delete</button>
-									<button onClick={()=>setDeleteProject(false)} className="duration-200 px-4 py-1 rounded-xl border-zinc-800 hover:bg-white hover:text-zinc-800 border-2 text-base">Cancel</button>
-								</div>
-							</div>
-						</div>
-					</div>
-			</div>}
-
 			{renameProject && <div>
 				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
 					<div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
-						<div className="border-2 border-zinc-700 w-[20%] bg-zinc-900 h-[29%] rounded-xl flex flex-col items-center py-5 px-3 overflow-y-scroll gap-3"> 
-							<div className="flex flex-col gap-10 items-center my-6">
-								<input id="username"type="text" placeholder = "Enter the new name" className="rounded-xl bg-transparent border-zinc-600 border-2 text-sm px-4 py-3 outline-none"/>
+						<div className="border-2 border-zinc-700 w-[20%] bg-white dark:bg-zinc-900 h-[29%] rounded-xl flex flex-col items-center py-5 px-3 overflow-y-scroll gap-3"> 
+							<form className="flex flex-col gap-10 items-center my-6">
+								<input id="username"type="text" placeholder = "Enter the new name" className="rounded-xl bg-transparent border-zinc-400 dark:border-zinc-600 border-2 text-sm px-4 py-3 outline-none"/>
 								<div className="flex gap-5">
-                        			<button type="submit" className="duration-200 px-4 border-2 border-zinc-400 py-1 rounded-xl hover:text-black hover:bg-zinc-50 hover:border-zinc-50 hover:text-whitee">Rename</button>
-                        			<button onClick={()=>setRenameProject(false)} className="duration-200 px-4 rounded-xl border-zinc-800 hover:bg-rose-500 hover:text-white border-2 text-base">Cancel</button>
+                        			<button type="submit" className="duration-200 px-4 border-2 border-gray-900 hover:bg-gray-900 dark:bg-transparent dark:border-zinc-400 py-1 rounded-xl dark:hover:text-black dark:hover:bg-zinc-50 dark:hover:border-zinc-50 hover:text-white">Rename</button>
+                        			<button onClick={()=>setRenameProject(false)} className="duration-200 px-4 rounded-xl border-zinc-800 hover:bg-rose-500 hover:border-rose-500 hover:text-white border-2 text-base">Cancel</button>
                     			</div>
-							</div>
+							</form>
 						</div>
 					</div>
 			</div>}
