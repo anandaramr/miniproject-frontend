@@ -9,7 +9,8 @@ import { request } from "../utils/request.js";
 import Login from "../components/Login.jsx";
 import Signup from "../components/Signup.jsx";
 import AuthContext from "../context/AuthContext.jsx";
-import { getCollaborators, getMyProjects } from "../api/projects.js";
+import { addCollaborator, getCollaborators, getMyProjects, updateProject } from "../api/projects.js";
+import Collaborators from "../components/Collaborators.jsx";
 
 function Home() {
 
@@ -17,11 +18,14 @@ function Home() {
 	const [ tabs, setTabs ] = useState([{ tabId: 1 }])
 	const [ currentTab, setCurrentTab ] = useState()
 	const [login, setLogin] = useState(false)
+	const [deleteProject, setDeleteProject] = useState(false);
 
 	const [signup, setSignup] = useState(false)
 	const [ dialog, setDialog ] = useState(false)
 	const [ proxy, setProxy ] = useState()
 	const [ dragIdx, setDragIdx ] = useState()
+	const [collaborators, setCollaborators] = useState(false)
+    const [renameProject, setRenameProject] = useState(false)
 
 	const [ projects, setProjects ] = useState([])
 	
@@ -193,7 +197,42 @@ function Home() {
 				<Signup setLogin={setLogin} setSignup={setSignup}/>
 			</div>}
 
-			<NavBar setLogin={setLogin}/>
+			{collaborators && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+				<Collaborators setCollaborators={setCollaborators}/>
+			</div>}
+
+			{deleteProject && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+					<div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
+						<div className="border-2 border-zinc-700 w-[24%] bg-zinc-900 h-[24%] rounded-xl flex flex-col items-center py-5 px-5 overflow-y-scroll gap-3"> 
+							<div className="flex flex-col gap-10 items-center my-6">
+								<p>Are you sure you want to delete the project?</p>
+								<div className="flex gap-5">
+									<button type="submit" className="duration-100 px-4 border-2 border-rose-500 py-2 rounded-xl bg-rose-500 hover:text-white  hover:border-rose-600 hover:bg-rose-600">Delete</button>
+									<button onClick={()=>setDeleteProject(false)} className="duration-200 px-4 py-1 rounded-xl border-zinc-800 hover:bg-white hover:text-zinc-800 border-2 text-base">Cancel</button>
+								</div>
+							</div>
+						</div>
+					</div>
+			</div>}
+
+			{renameProject && <div>
+				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
+					<div className="flex h-svh w-full justify-center items-center bg-transparent absolute z-20">
+						<div className="border-2 border-zinc-700 w-[20%] bg-zinc-900 h-[29%] rounded-xl flex flex-col items-center py-5 px-3 overflow-y-scroll gap-3"> 
+							<div className="flex flex-col gap-10 items-center my-6">
+								<input id="username"type="text" placeholder = "Enter the new name" className="rounded-xl bg-transparent border-zinc-600 border-2 text-sm px-4 py-3 outline-none"/>
+								<div className="flex gap-5">
+                        			<button type="submit" className="duration-200 px-4 border-2 border-zinc-400 py-1 rounded-xl hover:text-black hover:bg-zinc-50 hover:border-zinc-50 hover:text-whitee">Rename</button>
+                        			<button onClick={()=>setRenameProject(false)} className="duration-200 px-4 rounded-xl border-zinc-800 hover:bg-rose-500 hover:text-white border-2 text-base">Cancel</button>
+                    			</div>
+							</div>
+						</div>
+					</div>
+			</div>}
+
+			<NavBar setLogin={setLogin} setCollaborators={setCollaborators} setRenameProject={setRenameProject} setDeleteProject={setDeleteProject}/>
         
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>
