@@ -224,11 +224,10 @@ function Home() {
 
 			{showNewProjectWindow && <NewProject create={(projectName) => createNewProject(projectName)} cancel={() => setShowNewProjectWindow(false)} /> }
 
-			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setProjects={setProjects} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} setCollaborators={setCollaborators} setRenameProject={setRenameProject} setDeleteProject={setDeleteProject} />
-
-        {collaborators && <div>
-				<div className="flex h-svh w-full justify-center items-center absolute z-10 opacity-80 bg-zinc-950"></div>
-				<Collaborators setCollaborators={setCollaborators}/>
+			{collaborators && <div className="">
+				<div className="flex h-svh w-full justify-center items-center bg-black bg-opacity-60 absolute z-20">
+					<Collaborators setCollaborators={setCollaborators}/>
+				</div>
 			</div>}
 
 			{deleteProject && <div>
@@ -260,6 +259,8 @@ function Home() {
 						</div>
 					</div>
 			</div>}
+
+			<NavBar setLogin={setLogin} projects={projects} setTabs={setTabs} setProjects={setProjects} setCurrentTab={setCurrentTab} saveProject={saveProject} newProject={newProject} setCollaborators={setCollaborators} setRenameProject={setRenameProject} setDeleteProject={setDeleteProject} />
         
 			<button onClick={runAll} className="flex justify-center items-center px-7 gap-1 opacity-80 hover:opacity-100 duration-100">
 				<span className="material-symbols-outlined text-3xl text-emerald-500">play_arrow</span>

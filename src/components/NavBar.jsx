@@ -51,10 +51,6 @@ export default function NavBar({ setLogin, projects, setTabs, setProjects, setCu
                 <button onClick={saveProject} className="hover:text-zinc-200 text-zinc-400 px-3"><span className="material-symbols-outlined text-2xl">save</span></button>
 
                 <Popup collapsible title={<span className="material-symbols-outlined text-zinc-400 flex text-2xl hover:text-zinc-200">settings</span>}>
-                    <div className="text-zinc-400 mt-2 px-3 flex flex-col gap-2 items-center w-40 dark:border-zinc-700 border-zinc-300 shadow-md border-[1px] rounded-lg py-3 dark:bg-lightblack bg-slate-200 z-50 absolute text-sm">
-                        <button className="hover:text-white duration-150">Add Collaborator</button>
-                        <button className="hover:text-white duration-150">Delete Project</button>
-                <Popup  collapsible title={<span className="material-symbols-outlined text-zinc-400 flex text-2xl hover:text-zinc-200">settings</span>}>
                     <div className="text-zinc-400 mt-2 px-3 flex flex-col gap-4 items-center w-40 dark:border-zinc-700 border-zinc-300 shadow-md border-[1px] rounded-lg py-5 dark:bg-lightblack bg-slate-200 z-50 absolute text-base">
                         <button onClick={()=>setCollaborators(true)} className="hover:text-white duration-150">Collaborators</button>
                         <button onClick={()=>setRenameProject(true)} className="hover:text-white duration-150">Rename Project</button>
